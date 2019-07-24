@@ -1,0 +1,46 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    trains: apiserver
+    platform: trains
+  name: apiserver
+  namespace: trains
+spec:
+  replicas: 1
+  minReadySeconds: 15
+  progressDeadlineSeconds: 180
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        trains: apiserver
+        platform: trains
+    spec:
+      containers:
+      - image: allegroai/trains-server:0.10.1-1
+        name: apiserver
+        env:
+        - name: ELASTIC_SERVICE_SERVICE_HOST
+          value: elasticsearch-service
+        - name: MONGODB_SERVICE_SERVICE_HOST
+          value: mongo-service
+        args:
+        - apiserver
+        volumeMounts:
+        - mountPath: /var/log/trains
+          name: apiserver-hostpath0
+        volumeMounts:
+          - mountPath: /opt/trains/config
+            name: apiserver-hostpath1
+      restartPolicy: Always
+      nodeSelector:
+        app: trains
+      volumes:
+      - name: apiserver-hostpath0
+        hostPath:
+          path: /var/log/trains
+      - name: apiserver-hostpath1
+        hostPath:
+          path: /opt/trains/config
