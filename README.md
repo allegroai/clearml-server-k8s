@@ -1,27 +1,30 @@
-# Allegro.ai trains server Helm chart
+# Allegro.ai trains server on Kubernetes
 #### Pre-requirements
 * You have a kubernetes cluster
 * You have kubectl installed and configured [(install kubectl)](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
-* You have helm installed [(install helm)](https://helm.sh/docs/using_helm/#installing-helm)
 * You have node labeled 'app: trains' (see Additional Information)
-#### Add trains server repository to your helm:
+#### Deploying trains server on Kubernetes
+Clone this repo and go the cloned folder
 ```sh
-helm repo add allegroai https://allegroai.github.io/trains-helm/
+git clone https://github.com/allegroai/trains-k8s.git && cd trains-k8s
 ```
 
-Make sure repository was added correctly:
+If this is your first time running this deployment, you should create trains namespace:
 ```sh
-helm search trains
+kubectl create -f trains-namespace.yaml 
 ```
-You should see allegroai/trains-server-chart
+All deployment will be on trains namespace.
 
-#### Installing trains server chat on your cluster
-According to your search results, following command should deploy trains server on your cluster
+Run following command to deploy trains server services on your cluster:
 ```sh
-helm install allegroai/trains-server-chart
+kubectl apply -f services.yaml
 ```
 
-This will create 'trains' namespace in your cluster and deploy everything in in it.
+Run following command to create all the deployments:
+
+```sh
+kubectl create -f elasticsearch-deployment.yaml,mongo-deployment.yaml,apiserver-deployment.yaml,fileserver-deployment.yaml,webserver-deployment.yaml
+```
 
 #### Ports mapping
 Services expose following node ports:<br>
@@ -49,10 +52,4 @@ Record to access files:
 Note: by editing services.yaml you can reconfigure ports your node listens to
 #### Additional Information
 * By default, deployment is looking for node tagged as 'app: trains' but you can  
-change this when you install chart using --set flag. In values.yaml you can view all configurations you can 
-change with set. If for example you have one node, you can remove 
-requirement for running a deployment on a tagged node with this command:
-```sh
-helm install allegroai/trains-server-chart --set trains.nodeSelector=""
-```
-
+change this by editing deployment yaml's nodeSelectors.
