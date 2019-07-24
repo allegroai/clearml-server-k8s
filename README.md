@@ -3,17 +3,12 @@
 * You have a kubernetes cluster
 * You have kubectl installed and configured [(install kubectl)](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
 * You have node labeled 'app: trains' (see Additional Information)
-#### Clone trains server Kubernetes repository
+#### Deploying trains server on Kubernetes
+Clone this repo and go the cloned folder
 ```sh
-git clone <allegro ai kubernetes repository clone url>
+git clone https://github.com/allegroai/trains-k8s.git && cd trains-k8s
 ```
 
-Go the cloned folder
-```sh
-cd <clonned repository>
-```
-
-#### Deploying to Kubernetes cluster
 If this is your first time running this deployment, you should create trains namespace:
 ```sh
 kubectl create -f trains-namespace.yaml 
