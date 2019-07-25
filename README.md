@@ -37,7 +37,7 @@ Use this repository to deploy **trains-server** on Kubernetes clusters.
 
 1. Clone the `trains-k8s` repository and change to the new `trains-k8s` directory:
 
-        git clone https://github.com/allegroai/trains-k8s.git && cd trains-k8s
+        git clone https://github.com/allegroai/trains-server-k8s.git && cd trains-k8s
 
 1. Deploy the **trains-server** services on your Kubernetes cluster:
 
