@@ -1,55 +1,88 @@
-# Allegro.ai trains server on Kubernetes
-#### Pre-requirements
-* You have a kubernetes cluster
-* You have kubectl installed and configured [(install kubectl)](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
-* You have node labeled 'app: trains' (see Additional Information)
-#### Deploying trains server on Kubernetes
-Clone this repo and go the cloned folder
-```sh
-git clone https://github.com/allegroai/trains-k8s.git && cd trains-k8s
-```
+# TRAINS Server for Kubernetes Clusters 
 
-If this is your first time running this deployment, you should create trains namespace:
-```sh
-kubectl create -f trains-namespace.yaml 
-```
-All deployment will be on trains namespace.
+##  Auto-Magical Experiment Manager & Version Control for AI
 
-Run following command to deploy trains server services on your cluster:
-```sh
-kubectl apply -f services.yaml
-```
+[![GitHub license](https://img.shields.io/badge/license-SSPL-green.svg)](https://img.shields.io/badge/license-SSPL-green.svg)
+[![GitHub version](https://img.shields.io/github/release-pre/allegroai/trains-server.svg)](https://img.shields.io/github/release-pre/allegroai/trains-server.svg)
+[![PyPI status](https://img.shields.io/badge/status-beta-yellow.svg)](https://img.shields.io/badge/status-beta-yellow.svg)
 
-Run following command to create all the deployments:
+## Introduction
 
-```sh
-kubectl create -f elasticsearch-deployment.yaml,mongo-deployment.yaml,apiserver-deployment.yaml,fileserver-deployment.yaml,webserver-deployment.yaml
-```
+The **trains-server** is the backend service infrastructure for [TRAINS](https://github.com/allegroai/trains).
+It allows multiple users to collaborate and manage their experiments.
+By default, **TRAINS** is set up to work with the **TRAINS** demo server, which is open to anyone and resets periodically. 
+In order to host your own server, you will need to install **trains-server** and point **TRAINS** to it.
 
-#### Ports mapping
-Services expose following node ports:<br>
-app: 30080<br>
-api: 30008<br>
-files: 30081<br>
+**trains-server** contains the following components:
 
-30080 maps to trains webserver container on port 8080<br>
-30008 maps to trains apiserver container on port 8008<br>
-30081 maps to trains fileserver container on port 8081<br>
+* The **TRAINS** Web-App, a single-page UI for experiment management and browsing
+* RESTful API for:
+    * Documenting and logging experiment information, statistics and results
+    * Querying experiments history, logs and results
+* Locally-hosted file server for storing images and models making them easily accessible using the Web-App
 
-#### Accessing trains-server
-Indented way to use trains server is to create a load balancer and domain name with records pointing to it.
-Trains translates domain names in a specific way. This are the rules you need to follow for it to work. <br>
+Use this repository to deploy **trains-server** on Kubernetes clusters.
 
-Record to access web page:
-* \*app.\<your domain name\>.* (example: trainsapp.mydomainname.com) should point to your node on port 30080
+## Prerequisites
 
-Record to access api:
-* \*api.\<your domain name\>.* (example: trainsapi.mydomainname.com) should point to your node on port 30008
+* a Kubernetes cluster
+* `kubectl` is installed and configured (see [Install and Set Up kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) in the Kubernetes documentation)
+* a node labeled `app: trains`
 
-Record to access files:
-* \*files.\<your domain name\>.* (example: trainsfiles.mydomainname.com) should point to your node on port 30081
+## Deploying trains-server in Kubernetes Clusters
 
-Note: by editing services.yaml you can reconfigure ports your node listens to
-#### Additional Information
-* By default, deployment is looking for node tagged as 'app: trains' but you can  
-change this by editing deployment yaml's nodeSelectors.
+1. Create the `trains` namespace (all deployment is in this namespace):
+
+        kubectl apply -f trains-namespace.yaml 
+
+1. Clone the `trains-k8s` repository and change to the new `trains-k8s` directory:
+
+        git clone https://github.com/allegroai/trains-k8s.git && cd trains-k8s
+
+1. Deploy the **trains-server** services on your Kubernetes cluster:
+
+        kubectl apply -f services.yaml
+
+1. Create all the deployments:
+
+        kubectl apply -f elasticsearch-deployment.yaml,mongo-deployment.yaml,apiserver-deployment.yaml,fileserver-deployment.yaml,webserver-deployment.yaml
+
+## Port Mapping
+
+After **trains-server** is deployed, the services expose the following node ports:
+
+* API server on `30008`
+* Web server on `30080`
+* File server on `30081`
+
+## Accessing trains-server
+
+Access **trains-server** by creating a load balancer and domain name with records pointing to it.
+**TRAINS** translates domain names using the following rules:
+
+* record to access the **TRAINS** Web-App:
+
+    `*app.<your domain name>.*` pointing to your node on port `30080`
+
+    For example, `trainsapp.mydomainname.com` points to your node on port `30080`.
+
+* record to access the **TRAINS** API:
+
+    `*api.<your domain name>.*` pointing to your node on port `30008`
+
+    For example, `trainsapi.mydomainname.com` points to your node on port `30008`.
+
+* record to access the **TRAINS** file server:
+
+    `*files.<your domain name>.*`  pointing to your node on port `30081`
+
+    For example, `trainsfiles.mydomainname.com` points to your node on port `30081`.
+
+## Additional Configuration for trains-server
+
+You can also configure **trains-server** for:
+ 
+* fixed users (users with credentials)
+* non-responsive experiment watchdog settings
+ 
+For detailed instructions, see the [Optional Configuration](https://github.com/allegroai/trains-server#optional-configuration) section in the **trains-server** repository README file.
