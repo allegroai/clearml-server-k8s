@@ -1,0 +1,38 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    trains: mongo
+    platform: trains
+  name: mongo
+  namespace: {{ .Values.trains.namespace }}
+spec:
+  replicas: 1
+  minReadySeconds: 15
+  progressDeadlineSeconds: 180
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        trains: mongo
+        platform: trains
+    spec:
+      containers:
+      - image: mongo:3.6.5
+        name: mongo
+        volumeMounts:
+        - mountPath: /data/db
+          name: mongo-hostpath0
+        - mountPath: /data/configdb
+          name: mongo-hostpath1
+      restartPolicy: Always
+      nodeSelector:
+        {{ .Values.trains.nodeSelector}}
+      volumes:
+      - name: mongo-hostpath0
+        hostPath:
+          path: /data/db
+      - name: mongo-hostpath1
+        hostPath:
+          path: /data/configdb

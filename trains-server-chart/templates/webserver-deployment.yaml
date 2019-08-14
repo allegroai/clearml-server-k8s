@@ -1,0 +1,35 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    trains: webserver
+    platform: trains
+  name: webserver
+  namespace: {{ .Values.trains.namespace }}
+spec:
+  replicas: 1
+  minReadySeconds: 15
+  progressDeadlineSeconds: 180
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        trains: webserver
+        platform: trains
+    spec:
+      containers:
+      - image: {{ .Values.trains.image.repository }}:{{ .Values.trains.image.tag }}
+        name: webserver
+        args:
+        - webserver
+        volumeMounts:
+        - mountPath: /var/log/trains
+          name: webserver-hostpath
+      restartPolicy: Always
+      nodeSelector:
+        {{ .Values.trains.nodeSelector}}
+      volumes:
+      - name: webserver-hostpath
+        hostPath:
+          path: /var/log/trains

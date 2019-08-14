@@ -1,0 +1,27 @@
+trains:
+  nodeSelector: "app: trains"
+  namespace: trains
+  image:
+    repository: allegroai/trains-server
+    tag: 0.10.1-1
+apiserver:
+  elasticServiceName: elasticsearch-service
+  mongoServiceName: mongo-service
+elasticsearch:
+  esJavaOpts: "-Xms2g -Xmx2g"
+services:
+  annotations:
+    preInstall: '"helm.sh/hook": pre-install'
+  webserver:
+    nodePort: 30080
+    name: webserver-service
+  apiserver:
+    nodePort: 30008
+    name: apiserver-service
+  fileserver:
+    nodePort: 30081
+    name: fileserver-service
+  mongo:
+    name: mongo-service
+  elasticsearch:
+    name: elasticsearch-service

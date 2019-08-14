@@ -1,0 +1,46 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    trains: apiserver
+    platform: trains
+  name: apiserver
+  namespace: {{ .Values.trains.namespace }}
+spec:
+  replicas: 1
+  minReadySeconds: 15
+  progressDeadlineSeconds: 180
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        trains: apiserver
+        platform: trains
+    spec:
+      containers:
+      - image: {{ .Values.trains.image.repository }}:{{ .Values.trains.image.tag }}
+        name: apiserver
+        env:
+        - name: ELASTIC_SERVICE_SERVICE_HOST
+          value: {{ .Values.apiserver.elasticServiceName }}
+        - name: MONGODB_SERVICE_SERVICE_HOST
+          value: {{ .Values.apiserver.mongoServiceName }}
+        args:
+        - apiserver
+        volumeMounts:
+        - mountPath: /var/log/trains
+          name: apiserver-hostpath0
+        volumeMounts:
+          - mountPath: /opt/trains/config
+            name: apiserver-hostpath1
+      restartPolicy: Always
+      nodeSelector:
+        {{ .Values.trains.nodeSelector}}
+      volumes:
+      - name: apiserver-hostpath0
+        hostPath:
+          path: /var/log/trains
+      - name: apiserver-hostpath1
+        hostPath:
+          path: /opt/trains/config

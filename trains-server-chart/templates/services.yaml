@@ -1,0 +1,97 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.services.webserver.name}}
+  labels:
+    trains: webserver-service
+    platform: trains
+  namespace: {{ .Values.trains.namespace }}
+  annotations:
+    {{ .Values.services.annotations.preInstall }}
+spec:
+  selector:
+    trains: webserver
+  type: NodePort
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+    nodePort: {{ .Values.services.webserver.nodePort }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.services.apiserver.name}}
+  labels:
+    trains: apiserver-service
+    platform: trains
+  namespace: {{ .Values.trains.namespace }}
+  annotations:
+    {{ .Values.services.annotations.preInstall }}
+spec:
+  selector:
+    trains: apiserver
+  type: NodePort
+  ports:
+  - protocol: TCP
+    port: 8008
+    targetPort: 8008
+    nodePort: {{ .Values.services.apiserver.nodePort }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.services.fileserver.name}}
+  labels:
+    trains: fileserver-service
+    platform: trains
+  namespace: {{ .Values.trains.namespace }}
+  annotations:
+    {{ .Values.services.annotations.preInstall }}
+spec:
+  selector:
+    trains: fileserver
+  type: NodePort
+  ports:
+  - protocol: TCP
+    port: 8081
+    targetPort: 8081
+    nodePort: {{ .Values.services.fileserver.nodePort }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.services.mongo.name}}
+  labels:
+    trains: mongo-service
+    platform: trains
+  namespace: {{ .Values.trains.namespace }}
+  annotations:
+    {{ .Values.services.annotations.preInstall }}
+spec:
+  selector:
+    trains: mongo
+  type: ClusterIP
+  ports:
+  - protocol: TCP
+    port: 27017
+    targetPort: 27017
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.services.elasticsearch.name}}
+  labels:
+    trains: elasticsearch-service
+    platform: trains
+  namespace: {{ .Values.trains.namespace }}
+  annotations:
+    {{ .Values.services.annotations.preInstall }}
+spec:
+  selector:
+    trains: elasticsearch
+  type: ClusterIP
+  ports:
+  - protocol: TCP
+    port: 9200
+    targetPort: 9200

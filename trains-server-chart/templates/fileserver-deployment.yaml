@@ -1,0 +1,40 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    trains: fileserver
+    platform: trains
+  name: fileserver
+  namespace: {{ .Values.trains.namespace }}
+spec:
+  replicas: 1
+  minReadySeconds: 15
+  progressDeadlineSeconds: 180
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        trains: fileserver
+        platform: trains
+    spec:
+      containers:
+      - image: {{ .Values.trains.image.repository }}:{{ .Values.trains.image.tag }}
+        name: fileserver
+        args:
+        - fileserver
+        volumeMounts:
+        - mountPath: /var/log/trains
+          name: fileserver-hostpath0
+        - mountPath: /mnt/fileserver
+          name: fileserver-hostpath1
+      restartPolicy: Always
+      nodeSelector:
+        {{ .Values.trains.nodeSelector}}
+      volumes:
+      - name: fileserver-hostpath0
+        hostPath:
+          path: /var/log/trains
+      - name: fileserver-hostpath1
+        hostPath:
+          path: /mnt/fileserver
