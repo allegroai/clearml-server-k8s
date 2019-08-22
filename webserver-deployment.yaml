@@ -1,35 +1,70 @@
-apiVersion: extensions/v1beta1
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/name: webserver
+    app.kubernetes.io/instance: trains-server
+    app.kubernetes.io/part-of: trains-server
+  name: webserver-service
+  namespace: trains
+spec:
+  selector:
+    app.kubernetes.io/name: webserver
+    app.kubernetes.io/instance: trains-server
+    app.kubernetes.io/part-of: trains-server
+  type: NodePort
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+    nodePort: 30080
+---
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    trains: webserver
-    platform: trains
+    app.kubernetes.io/name: webserver
+    app.kubernetes.io/instance: trains-server
+    app.kubernetes.io/part-of: trains-server
   name: webserver
   namespace: trains
 spec:
-  replicas: 1
-  minReadySeconds: 15
-  progressDeadlineSeconds: 180
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: webserver
+      app.kubernetes.io/instance: trains-server
+      app.kubernetes.io/part-of: trains-server
+  progressDeadlineSeconds: 10
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        trains: webserver
-        platform: trains
+        app.kubernetes.io/name: webserver
+        app.kubernetes.io/instance: trains-server
+        app.kubernetes.io/part-of: trains-server
     spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - trains
       containers:
       - image: allegroai/trains-server:0.10.1-1
         name: webserver
+        resources:
+          requests:
+            memory: "25M"
+            cpu: "100m"
+          limits:
+            memory: "50M"
+            cpu: "200m"
         args:
         - webserver
-        volumeMounts:
-        - mountPath: /var/log/trains
-          name: webserver-hostpath
       restartPolicy: Always
       nodeSelector:
         app: trains
-      volumes:
-      - name: webserver-hostpath
-        hostPath:
-          path: /var/log/trains

@@ -1,26 +1,68 @@
-apiVersion: extensions/v1beta1
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/name: fileserver
+    app.kubernetes.io/instance: trains-server
+    app.kubernetes.io/part-of: trains-server
+  name: fileserver-service
+  namespace: trains
+spec:
+  selector:
+    app.kubernetes.io/name: fileserver
+    app.kubernetes.io/instance: trains-server
+    app.kubernetes.io/part-of: trains-server
+  type: NodePort
+  ports:
+  - protocol: TCP
+    port: 8081
+    targetPort: 8081
+    nodePort: 30081
+---
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    trains: fileserver
-    platform: trains
+    app.kubernetes.io/name: fileserver
+    app.kubernetes.io/instance: trains-server
+    app.kubernetes.io/part-of: trains-server
   name: fileserver
   namespace: trains
 spec:
-  replicas: 1
-  minReadySeconds: 15
-  progressDeadlineSeconds: 180
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: fileserver
+      app.kubernetes.io/instance: trains-server
+      app.kubernetes.io/part-of: trains-server
+  progressDeadlineSeconds: 5
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        trains: fileserver
-        platform: trains
+        app.kubernetes.io/name: fileserver
+        app.kubernetes.io/instance: trains-server
+        app.kubernetes.io/part-of: trains-server
     spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: app
+                    operator: In
+                    values:
+                    - trains
       containers:
       - image: allegroai/trains-server:0.10.1-1
         name: fileserver
+        resources:
+          requests:
+            memory: "30M"
+            cpu: "50m"
+          limits:
+            memory: "60M"
+            cpu: "100m"
         args:
         - fileserver
         volumeMounts:
@@ -34,7 +76,7 @@ spec:
       volumes:
       - name: fileserver-hostpath0
         hostPath:
-          path: /var/log/trains
+          path: /opt/trains/logs
       - name: fileserver-hostpath1
         hostPath:
-          path: /mnt/fileserver
+          path: /opt/trains/data/fileserver

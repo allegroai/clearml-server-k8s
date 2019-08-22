@@ -1,26 +1,61 @@
-apiVersion: extensions/v1beta1
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/name: elasticsearch
+    app.kubernetes.io/instance: trains-server
+    app.kubernetes.io/part-of: trains-server
+  name: elasticsearch-service
+  namespace: trains
+spec:
+  selector:
+    app.kubernetes.io/name: elasticsearch
+    app.kubernetes.io/instance: trains-server
+    app.kubernetes.io/part-of: trains-server
+  type: ClusterIP
+  ports:
+  - protocol: TCP
+    port: 9200
+    targetPort: 9200
+---
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    trains: elasticsearch
-    platform: trains
+    app.kubernetes.io/name: elasticsearch
+    app.kubernetes.io/instance: trains-server
+    app.kubernetes.io/part-of: trains-server
   name: elasticsearch
   namespace: trains
 spec:
-  replicas: 1
-  minReadySeconds: 15
-  progressDeadlineSeconds: 180
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: elasticsearch
+      app.kubernetes.io/instance: trains-server
+      app.kubernetes.io/part-of: trains-server
+  minReadySeconds: 50
+  progressDeadlineSeconds: 60
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        trains: elasticsearch
-        platform: trains
+        app.kubernetes.io/name: elasticsearch
+        app.kubernetes.io/instance: trains-server
+        app.kubernetes.io/part-of: trains-server
     spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - trains
       initContainers:
       - name: set-dir-owner
-        image: busybox:1.29.2
+        image: centos:7
         command: ['sh', '-c', 'chown -R 1000:1000 /usr/share/elasticsearch/data']
         volumeMounts:
         - name: elasticsearch-hostpath
@@ -59,6 +94,13 @@ spec:
           value: "false"
         - name: ES_JAVA_OPTS
           value: "-Xms2g -Xmx2g"
+        resources:
+          requests:
+            memory: "2.3G"
+            cpu: "600m"
+          limits:
+            memory: "2.6G"
+            cpu: "1"
         image: docker.elastic.co/elasticsearch/elasticsearch:5.6.16
         name: elasticsearch
         ports:
@@ -72,4 +114,4 @@ spec:
       volumes:
       - name: elasticsearch-hostpath
         hostPath:
-          path: /usr/share/elasticsearch/data
+          path: /opt/trains/data/elastic

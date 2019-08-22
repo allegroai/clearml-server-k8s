@@ -1,26 +1,68 @@
-apiVersion: extensions/v1beta1
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/name: mongo
+    app.kubernetes.io/instance: trains-server
+    app.kubernetes.io/part-of: trains-server
+  name: mongo-service
+  namespace: trains
+spec:
+  selector:
+    app.kubernetes.io/name: mongo
+    app.kubernetes.io/instance: trains-server
+    app.kubernetes.io/part-of: trains-server
+  type: ClusterIP
+  ports:
+  - protocol: TCP
+    port: 27017
+    targetPort: 27017
+---
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    trains: mongo
-    platform: trains
+    app.kubernetes.io/name: mongo
+    app.kubernetes.io/instance: trains-server
+    app.kubernetes.io/part-of: trains-server
   name: mongo
   namespace: trains
 spec:
-  replicas: 1
-  minReadySeconds: 15
-  progressDeadlineSeconds: 180
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: mongo
+      app.kubernetes.io/instance: trains-server
+      app.kubernetes.io/part-of: trains-server
+  minReadySeconds: 20
+  progressDeadlineSeconds: 30
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        trains: mongo
-        platform: trains
+        app.kubernetes.io/name: mongo
+        app.kubernetes.io/instance: trains-server
+        app.kubernetes.io/part-of: trains-server
     spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: app
+                    operator: In
+                    values:
+                    - trains
       containers:
       - image: mongo:3.6.5
         name: mongo
+        resources:
+          requests:
+            memory: "125M"
+            cpu: "200m"
+          limits:
+            memory: "250M"
+            cpu: "300m"
         volumeMounts:
         - mountPath: /data/db
           name: mongo-hostpath0
@@ -32,7 +74,7 @@ spec:
       volumes:
       - name: mongo-hostpath0
         hostPath:
-          path: /data/db
+          path: /opt/trains/data/mongo/db
       - name: mongo-hostpath1
         hostPath:
-          path: /data/configdb
+          path: /opt/trains/data/mongo/configdb
