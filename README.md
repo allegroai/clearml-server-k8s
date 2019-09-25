@@ -81,17 +81,17 @@ For information about setting this parameter on other systems, see the [elastic 
     
 ## Deploying trains-server in Kubernetes Clusters
 
+1. Clone the `trains-server-k8s` repository and change to the new `trains-server-k8s` directory:
+
+        git clone https://github.com/allegroai/trains-server-k8s.git && cd trains-server-k8s
+
 1. Create the trains `namespace` (all deployment is in trains `namespace`):
 
         kubectl apply -f trains-namespace.yaml 
-
-1. Clone the `trains-k8s` repository and change to the new `trains-k8s` directory:
-
-        git clone https://github.com/allegroai/trains-k8s.git && cd trains-k8s
-
+        
 1. Create all the deployments:
 
-        kubectl apply -f elasticsearch-deployment.yaml,mongo-deployment.yaml,apiserver-deployment.yaml,fileserver-deployment.yaml,webserver-deployment.yaml
+        kubectl apply -f .
     
 ## Updating trains-server application in Kubernetes Clusters
 
@@ -103,7 +103,7 @@ To update deployment you must edit yaml file you want to update and then run fol
         
    * If you previously deployed a **trains-server**, you may encounter errors. If so, you must first delete old deployments using the following command:
     
-            kubectl delete -f elasticsearch-deployment.yaml,apiserver-deployment.yaml,fileserver-deployment.yaml,mongo-deployment.yaml,webserver-deployment.yaml
+            kubectl delete -f .
             
    After running the `kubectl delete` command, you can run the `kubectl apply` command.
 
