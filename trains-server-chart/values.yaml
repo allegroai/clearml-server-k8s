@@ -3,15 +3,13 @@ trains:
   namespace: trains
   image:
     repository: allegroai/trains-server
-    tag: 0.10.1-1
+    tag: 0.11.0
 apiserver:
   elasticServiceName: elasticsearch-service
   mongoServiceName: mongo-service
 elasticsearch:
   esJavaOpts: "-Xms2g -Xmx2g"
 services:
-  annotations:
-    preInstall: '"helm.sh/hook": pre-install'
   webserver:
     nodePort: 30080
     name: webserver-service

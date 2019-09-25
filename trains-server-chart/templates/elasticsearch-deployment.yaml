@@ -1,26 +1,69 @@
-apiVersion: extensions/v1beta1
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.services.elasticsearch.name}}
+  labels:
+    app.kubernetes.io/name: elasticsearch
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/part-of: trains-server
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+  namespace: {{ .Values.trains.namespace }}
+spec:
+  selector:
+    app.kubernetes.io/name: elasticsearch
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/part-of: trains-server
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+  type: ClusterIP
+  ports:
+  - protocol: TCP
+    port: 9200
+    targetPort: 9200
+---
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    trains: elasticsearch
-    platform: trains
+    app.kubernetes.io/name: elasticsearch
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/part-of: trains-server
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
   name: elasticsearch
   namespace: {{ .Values.trains.namespace }}
 spec:
-  replicas: 1
-  minReadySeconds: 15
-  progressDeadlineSeconds: 180
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: elasticsearch
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      app.kubernetes.io/part-of: trains-server
+      app.kubernetes.io/managed-by: {{ .Release.Service }}
+  minReadySeconds: 50
+  progressDeadlineSeconds: 60
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        trains: elasticsearch
-        platform: trains
+        app.kubernetes.io/name: elasticsearch
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/part-of: trains-server
+        app.kubernetes.io/managed-by: {{ .Release.Service }}
+        helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
     spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - trains
       initContainers:
       - name: set-dir-owner
-        image: busybox:1.29.2
+        image: centos:7
         command: ['sh', '-c', 'chown -R 1000:1000 /usr/share/elasticsearch/data']
         volumeMounts:
         - name: elasticsearch-hostpath
@@ -59,6 +102,13 @@ spec:
           value: "false"
         - name: ES_JAVA_OPTS
           value: {{ .Values.elasticsearch.esJavaOpts }}
+        resources:
+          requests:
+            memory: "2.3G"
+            cpu: "600m"
+          limits:
+            memory: "2.6G"
+            cpu: "1"
         image: docker.elastic.co/elasticsearch/elasticsearch:5.6.16
         name: elasticsearch
         ports:
@@ -68,8 +118,8 @@ spec:
           name: elasticsearch-hostpath
       restartPolicy: Always
       nodeSelector:
-        {{ .Values.trains.nodeSelector}}
+        {{ .Values.trains.nodeSelector }}
       volumes:
       - name: elasticsearch-hostpath
         hostPath:
-          path: /usr/share/elasticsearch/data
+          path: /opt/trains/data/elastic

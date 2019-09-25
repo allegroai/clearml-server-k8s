@@ -1,26 +1,80 @@
-apiVersion: extensions/v1beta1
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.services.apiserver.name}}
+  labels:
+    app.kubernetes.io/name: apiserver
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/part-of: trains-server
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/version: {{ .Values.trains.image.tag }}
+    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+  namespace: {{ .Values.trains.namespace }}
+spec:
+  selector:
+    app.kubernetes.io/name: apiserver
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/part-of: trains-server
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+  type: NodePort
+  ports:
+  - protocol: TCP
+    port: 8008
+    targetPort: 8008
+    nodePort: {{ .Values.services.apiserver.nodePort }}
+---
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    trains: apiserver
-    platform: trains
+    app.kubernetes.io/name: apiserver
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/part-of: trains-server
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/version: {{ .Values.trains.image.tag }}
+    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
   name: apiserver
   namespace: {{ .Values.trains.namespace }}
 spec:
-  replicas: 1
-  minReadySeconds: 15
-  progressDeadlineSeconds: 180
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: apiserver
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      app.kubernetes.io/part-of: trains-server
+      app.kubernetes.io/managed-by: {{ .Release.Service }}
+  minReadySeconds: 20
+  progressDeadlineSeconds: 30
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        trains: apiserver
-        platform: trains
+        app.kubernetes.io/name: apiserver
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/part-of: trains-server
+        app.kubernetes.io/managed-by: {{ .Release.Service }}
+        app.kubernetes.io/version: {{ .Values.trains.image.tag }}
+        helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
     spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: app
+                    operator: In
+                    values:
+                    - trains
       containers:
       - image: {{ .Values.trains.image.repository }}:{{ .Values.trains.image.tag }}
         name: apiserver
+        resources:
+          requests:
+            memory: "50M"
+            cpu: "200m"
+          limits:
+            memory: "100M"
+            cpu: "400m"
         env:
         - name: ELASTIC_SERVICE_SERVICE_HOST
           value: {{ .Values.apiserver.elasticServiceName }}
@@ -40,7 +94,7 @@ spec:
       volumes:
       - name: apiserver-hostpath0
         hostPath:
-          path: /var/log/trains
+          path: /opt/trains/logs
       - name: apiserver-hostpath1
         hostPath:
           path: /opt/trains/config
