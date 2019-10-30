@@ -59,7 +59,7 @@ spec:
                     values:
                     - trains
       containers:
-      - image: allegroai/trains-server:0.11.0
+      - image: allegroai/trains-server:0.12
         name: apiserver
         resources:
           requests:
@@ -69,10 +69,12 @@ spec:
             memory: "100M"
             cpu: "400m"
         env:
-        - name: ELASTIC_SERVICE_SERVICE_HOST
+        - name: ELASTIC_SERVICE_HOST
           value: elasticsearch-service
-        - name: MONGODB_SERVICE_SERVICE_HOST
+        - name: MONGODB_SERVICE_HOST
           value: mongo-service
+        - name: REDIS_SERVICE_HOST
+          value: redis
         args:
         - apiserver
         volumeMounts:

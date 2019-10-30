@@ -84,7 +84,7 @@ For information about setting this parameter on other systems, see the [elastic 
  
 1. Add the **trains-server** repository to your Helm:
 
-         helm repo add allegroai https://allegroai.github.io/trains-server-helm/
+        helm repo add allegroai https://allegroai.github.io/trains-server-helm/
 
 1. Confirm the **trains-server** repository is now in Helm:
 

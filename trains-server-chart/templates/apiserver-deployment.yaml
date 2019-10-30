@@ -76,10 +76,12 @@ spec:
             memory: "100M"
             cpu: "400m"
         env:
-        - name: ELASTIC_SERVICE_SERVICE_HOST
+        - name: ELASTIC_SERVICE_HOST
           value: {{ .Values.apiserver.elasticServiceName }}
-        - name: MONGODB_SERVICE_SERVICE_HOST
+        - name: MONGODB_SERVICE_HOST
           value: {{ .Values.apiserver.mongoServiceName }}
+        - name: REDIS_SERVICE_HOST
+          value: {{ .Values.apiserver.redisServiceName }}
         args:
         - apiserver
         volumeMounts:

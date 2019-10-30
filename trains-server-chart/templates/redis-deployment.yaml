@@ -1,58 +1,55 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Values.services.webserver.name}}
+  name: {{ .Values.services.redis.name}}
   labels:
-    app.kubernetes.io/name: webserver
+    app.kubernetes.io/name: redis
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/part-of: trains-server
     app.kubernetes.io/managed-by: {{ .Release.Service }}
-    app.kubernetes.io/version: {{ .Values.trains.image.tag }}
     helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
   namespace: {{ .Values.trains.namespace }}
 spec:
   selector:
-    app.kubernetes.io/name: webserver
+    app.kubernetes.io/name: redis
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/part-of: trains-server
     app.kubernetes.io/managed-by: {{ .Release.Service }}
-  type: NodePort
+  type: ClusterIP
   ports:
   - protocol: TCP
-    port: 80
-    targetPort: 80
-    nodePort: {{ .Values.services.webserver.nodePort }}
+    port: 6379
+    targetPort: 6379
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app.kubernetes.io/name: webserver
+    app.kubernetes.io/name: redis
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/part-of: trains-server
     app.kubernetes.io/managed-by: {{ .Release.Service }}
-    app.kubernetes.io/version: {{ .Values.trains.image.tag }}
     helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
-  name: webserver
+  name: redis
   namespace: {{ .Values.trains.namespace }}
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/name: webserver
+      app.kubernetes.io/name: redis
       app.kubernetes.io/instance: {{ .Release.Name }}
       app.kubernetes.io/part-of: trains-server
       app.kubernetes.io/managed-by: {{ .Release.Service }}
-  progressDeadlineSeconds: 10
+  minReadySeconds: 20
+  progressDeadlineSeconds: 30
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: webserver
+        app.kubernetes.io/name: redis
         app.kubernetes.io/instance: {{ .Release.Name }}
         app.kubernetes.io/part-of: trains-server
         app.kubernetes.io/managed-by: {{ .Release.Service }}
-        app.kubernetes.io/version: {{ .Values.trains.image.tag }}
         helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
     spec:
       affinity:
@@ -65,17 +62,22 @@ spec:
                     values:
                     - trains
       containers:
-      - image: {{ .Values.trains.image.repository }}:{{ .Values.trains.image.tag }}
-        name: webserver
+      - image: redis:5.0
+        name: redis
         resources:
           requests:
-            memory: "25M"
-            cpu: "100m"
-          limits:
-            memory: "50M"
+            memory: "100M"
             cpu: "200m"
-        args:
-        - webserver
+          limits:
+            memory: "100M"
+            cpu: "400m"
+        volumeMounts:
+        - mountPath: /data
+          name: redis-data
       restartPolicy: Always
       nodeSelector:
         {{ .Values.trains.nodeSelector}}
+      volumes:
+      - name: redis-data
+        hostPath:
+          path: /opt/trains/data/redis

@@ -3,10 +3,11 @@ trains:
   namespace: trains
   image:
     repository: allegroai/trains-server
-    tag: 0.11.0
+    tag: 0.12.0-174
 apiserver:
   elasticServiceName: elasticsearch-service
   mongoServiceName: mongo-service
+  redisServiceName: redis
 elasticsearch:
   esJavaOpts: "-Xms2g -Xmx2g"
 services:
@@ -23,3 +24,5 @@ services:
     name: mongo-service
   elasticsearch:
     name: elasticsearch-service
+  redis:
+    name: redis
