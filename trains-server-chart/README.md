@@ -138,21 +138,21 @@ Access **trains-server** by creating a load balancer and domain name with record
 
 * record to access the **TRAINS** Web-App:
 
-    `*app.<your domain name>.*` 
+    `app.<your domain name>.*` 
 
-    For example, `trainsapp.mydomainname.com` points to your node on port `30080`.
+    For example, `app.trains.mydomainname.com` points to your node on port `30080`.
 
 * record to access the **TRAINS** API:
 
-    `*api.<your domain name>.*` 
+    `api.<your domain name>.*` 
 
-    For example, `trainsapi.mydomainname.com` points to your node on port `30008`.
+    For example, `api.trains.mydomainname.com` points to your node on port `30008`.
 
 * record to access the **TRAINS** file server:
 
-    `*files.<your domain name>.*` 
+    `files.<your domain name>.*` 
 
-    For example, `trainsfiles.mydomainname.com` points to your node on port `30081`.
+    For example, `files.trains.mydomainname.com` points to your node on port `30081`.
 
 ## Additional Configuration for trains-server
 
