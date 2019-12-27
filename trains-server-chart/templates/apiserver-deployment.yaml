@@ -82,21 +82,43 @@ spec:
           value: {{ .Values.apiserver.mongoServiceName }}
         - name: REDIS_SERVICE_HOST
           value: {{ .Values.apiserver.redisServiceName }}
+        {{- if .Values.use_secrets_flexvolume }}
+        - name: TRAINS_CONFIG_DIR
+          value: /opt/trains/config:/opt/trains/secrets
+        {{- else }}
+        - name: TRAINS_CONFIG_DIR
+          value: /opt/trains/config
+        {{- end }}
         args:
         - apiserver
-        volumeMounts:
-        - mountPath: /var/log/trains
-          name: apiserver-hostpath0
-        volumeMounts:
-          - mountPath: /opt/trains/config
-            name: apiserver-hostpath1
+        volumeMounts: 
+        {{- if .Values.use_secrets_flexvolume }}
+            - mountPath: /opt/trains/secrets
+              name: apiserver-azurekeyvault
+        {{- end }}
+        {{- with .Values.apiserver.volumeMounts }}
+            {{- toYaml . | nindent 12 }}
+        {{- end }}
       restartPolicy: Always
       nodeSelector:
         {{ .Values.trains.nodeSelector}}
       volumes:
-      - name: apiserver-hostpath0
-        hostPath:
-          path: /opt/trains/logs
-      - name: apiserver-hostpath1
-        hostPath:
-          path: /opt/trains/config
+      {{- if .Values.use_secrets_flexvolume }}
+        - name: apiserver-azurekeyvault
+          flexVolume:
+          driver: "azure/kv"
+          secretRef:
+              name: {{ .Values.fv.secretRef }}
+          options:
+              usepodidentity: "{{ .Values.fv.usepodidentity }}"
+              resourcegroup: "{{ .Values.fv.resourcegroup }}"
+              keyvaultname: "{{ .Values.fv.keyvaultname }}"
+              keyvaultobjectnames: "{{ .Values.fv.keyvaultobjectnames }}"
+              keyvaultobjectaliases: "{{ .Values.fv.keyvaultobjectaliases }}"
+              keyvaultobjecttypes: "{{ .Values.fv.keyvaultobjecttypes }}"
+              subscriptionid: "{{ .Values.fv.subscriptionid }}"
+              tenantid: "{{ .Values.fv.tenantid }}"
+      {{- end }}
+      {{- with .Values.apiserver.volumes }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
