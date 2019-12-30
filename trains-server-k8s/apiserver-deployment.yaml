@@ -71,10 +71,22 @@ spec:
         env:
         - name: ELASTIC_SERVICE_HOST
           value: elasticsearch-service
+        - name: TRAINS_ELASTIC_SERVICE_HOST
+          value: elasticsearch-service
+        - name: TRAINS_ELASTIC_SERVICE_PORT
+          value: "9200"
         - name: MONGODB_SERVICE_HOST
           value: mongo-service
+        - name: TRAINS_MONGODB_SERVICE_HOST
+          value: mongo-service
+        - name: TRAINS_MONGODB_SERVICE_PORT
+          value: "27017"
         - name: REDIS_SERVICE_HOST
           value: redis
+        - name: TRAINS_REDIS_SERVICE_HOST
+          value: redis
+        - name: TRAINS_REDIS_SERVICE_PORT
+          value: "6379"
         args:
         - apiserver
         volumeMounts:
