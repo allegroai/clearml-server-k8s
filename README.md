@@ -109,7 +109,7 @@ To update deployment you must edit yaml file you want to update and then run fol
 
 ## Port Mapping
 
-After **trains-server** is deployed, the services expose the following node ports:
+After **trains-server** is deployed, the k8s services expose the following node ports:
 
 * API server on `30008`
 * Web server on `30080`
@@ -117,30 +117,27 @@ After **trains-server** is deployed, the services expose the following node port
 
 ## Accessing trains-server
 
-Access **trains-server** by creating a load balancer and domain name with records pointing to it.
-**TRAINS** translates domain names using the following rules:
+Access **trains-server** by creating a load balancer and domain name with records pointing to the load balancer.
 
-* record to access the **TRAINS** Web-App:
+Once you have a load balancer and domain name set up, follow these steps to configure access to trains-server on your k8s cluster:
 
-    `app.<your domain name>.*` 
+1. Create domain records
 
-    For example, `app.trains.mydomainname.com` points to your node on port `30080`.
-
-* record to access the **TRAINS** API:
-
-    `api.<your domain name>.*` 
-
-    For example, `api.trains.mydomainname.com` points to your node on port `30008`.
-
-* record to access the **TRAINS** file server:
-
-    `files.<your domain name>.*` 
-
-    For example, `files.trains.mydomainname.com` points to your node on port `30081`.
+   * Create 3 records to be used for Web-App, File server and API access using the following rules: 
+     * `app.<your domain name>` 
+     * `files.<your domain name>`
+     * `api.<your domain name>`
+     
+     (*for example, `app.trains.mydomainname.com`, `files.trains.mydomainname.com` and `api.trains.mydomainname.com`*)
+2. Point the records you created to the load balancer
+3. Configure the load balancer to redirect traffic coming from the records you created:
+     * `app.<your domain name>` should be redirected to k8s cluster nodes on port `30080`
+     * `files.<your domain name>` should be redirected to k8s cluster nodes on port `30081`
+     * `api.<your domain name>` should be redirected to k8s cluster nodes on port `30008`
 
 ## Additional Configuration for trains-server
 
-You can also configure **trains-server** for:
+You can also configure the **trains-server** for:
  
 * fixed users (users with credentials)
 * non-responsive experiment watchdog settings
