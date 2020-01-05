@@ -106,18 +106,18 @@ spec:
       {{- if .Values.use_secrets_flexvolume }}
         - name: apiserver-azurekeyvault
           flexVolume:
-          driver: "azure/kv"
-          secretRef:
-              name: {{ .Values.fv.secretRef }}
-          options:
-              usepodidentity: "{{ .Values.fv.usepodidentity }}"
-              resourcegroup: "{{ .Values.fv.resourcegroup }}"
-              keyvaultname: "{{ .Values.fv.keyvaultname }}"
-              keyvaultobjectnames: "{{ .Values.fv.keyvaultobjectnames }}"
-              keyvaultobjectaliases: "{{ .Values.fv.keyvaultobjectaliases }}"
-              keyvaultobjecttypes: "{{ .Values.fv.keyvaultobjecttypes }}"
-              subscriptionid: "{{ .Values.fv.subscriptionid }}"
-              tenantid: "{{ .Values.fv.tenantid }}"
+            driver: "azure/kv"
+            secretRef:
+                name: {{ .Values.fv.secretRef }}
+            options:
+                usepodidentity: "{{ .Values.fv.usepodidentity }}"
+                resourcegroup: "{{ .Values.fv.resourcegroup }}"
+                keyvaultname: "{{ .Values.fv.keyvaultname }}"
+                keyvaultobjectnames: "{{ .Values.fv.keyvaultobjectnames }}"
+                keyvaultobjectaliases: "{{ .Values.fv.keyvaultobjectaliases }}"
+                keyvaultobjecttypes: "{{ .Values.fv.keyvaultobjecttypes }}"
+                subscriptionid: "{{ .Values.fv.subscriptionid }}"
+                tenantid: "{{ .Values.fv.tenantid }}"
       {{- end }}
       {{- with .Values.apiserver.volumes }}
         {{- toYaml . | nindent 8 }}
