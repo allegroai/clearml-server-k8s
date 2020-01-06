@@ -59,30 +59,24 @@ spec:
                     values:
                     - trains
       containers:
-      - image: allegroai/trains-server:0.12
+      - image: allegroai/trains-server:0.13
         name: apiserver
         resources:
           requests:
-            memory: "50M"
+            memory: "150M"
             cpu: "200m"
           limits:
-            memory: "100M"
+            memory: "150M"
             cpu: "400m"
         env:
-        - name: ELASTIC_SERVICE_HOST
-          value: elasticsearch-service
         - name: TRAINS_ELASTIC_SERVICE_HOST
           value: elasticsearch-service
         - name: TRAINS_ELASTIC_SERVICE_PORT
           value: "9200"
-        - name: MONGODB_SERVICE_HOST
-          value: mongo-service
         - name: TRAINS_MONGODB_SERVICE_HOST
           value: mongo-service
         - name: TRAINS_MONGODB_SERVICE_PORT
           value: "27017"
-        - name: REDIS_SERVICE_HOST
-          value: redis
         - name: TRAINS_REDIS_SERVICE_HOST
           value: redis
         - name: TRAINS_REDIS_SERVICE_PORT

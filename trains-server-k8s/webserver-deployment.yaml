@@ -54,7 +54,7 @@ spec:
                   values:
                   - trains
       containers:
-      - image: allegroai/trains-server:0.12
+      - image: allegroai/trains-server:0.13
         name: webserver
         resources:
           requests:

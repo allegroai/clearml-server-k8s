@@ -70,26 +70,20 @@ spec:
         name: apiserver
         resources:
           requests:
-            memory: "50M"
+            memory: "150M"
             cpu: "200m"
           limits:
-            memory: "100M"
+            memory: "150M"
             cpu: "400m"
         env:
-        - name: ELASTIC_SERVICE_HOST
-          value: {{ .Values.apiserver.elasticServiceName }}
         - name: TRAINS_ELASTIC_SERVICE_HOST
           value: {{ .Values.apiserver.elasticServiceName }}
         - name: TRAINS_ELASTIC_SERVICE_PORT
           value: "{{ .Values.apiserver.elasticServicePort }}"
-        - name: MONGODB_SERVICE_HOST
-          value: {{ .Values.apiserver.mongoServiceName }}
         - name: TRAINS_MONGODB_SERVICE_HOST
           value: {{ .Values.apiserver.mongoServiceName }}
         - name: TRAINS_MONGODB_SERVICE_PORT
           value: "{{ .Values.apiserver.mongoServicePort }}"
-        - name: REDIS_SERVICE_HOST
-          value: {{ .Values.apiserver.redisServiceName }}
         - name: TRAINS_REDIS_SERVICE_HOST
           value: {{ .Values.apiserver.redisServiceName }}
         - name: TRAINS_REDIS_SERVICE_PORT
@@ -99,9 +93,8 @@ spec:
         volumeMounts:
         - mountPath: /var/log/trains
           name: apiserver-hostpath0
-        volumeMounts:
-          - mountPath: /opt/trains/config
-            name: apiserver-hostpath1
+        - mountPath: /opt/trains/config
+          name: apiserver-hostpath1
       restartPolicy: Always
       nodeSelector:
         {{ .Values.trains.nodeSelector}}
