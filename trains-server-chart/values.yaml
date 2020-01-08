@@ -49,4 +49,11 @@ services:
     name: elasticsearch-service
   redis:
     name: redis
+ingress: 
+    enabled: false
+    name: trains-server-ingress
+    annotations: {}
+    host: ""
+    tls: 
+        secretName: ""
 use_secrets_flexvolume: false
