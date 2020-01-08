@@ -125,34 +125,25 @@ After **trains-server** is deployed, the services expose the following node port
 * Web server on `30080`
 * File server on `30081`
 
-The node ports map to the following  container ports:
-
-* `30080` maps to **trains-webserver** container on port `80`
-* `30008` maps to **trains-apiserver** container on port `8008`
-* `30081` maps to **trains-fileserver** container on port `8081`
-
 ## Accessing trains-server
 
-Access **trains-server** by creating a load balancer and domain name with records pointing to it.
-**TRAINS** translates domain names using the following rules:
+Access **trains-server** by creating a load balancer and domain name with records pointing to the load balancer.
 
-* record to access the **TRAINS** Web-App:
+Once you have a load balancer and domain name set up, follow these steps to configure access to trains-server on your k8s cluster:
 
-    `app.<your domain name>.*` 
+1. Create domain records
 
-    For example, `app.trains.mydomainname.com` points to your node on port `30080`.
-
-* record to access the **TRAINS** API:
-
-    `api.<your domain name>.*` 
-
-    For example, `api.trains.mydomainname.com` points to your node on port `30008`.
-
-* record to access the **TRAINS** file server:
-
-    `files.<your domain name>.*` 
-
-    For example, `files.trains.mydomainname.com` points to your node on port `30081`.
+   * Create 3 records to be used for Web-App, File server and API access using the following rules: 
+     * `app.<your domain name>` 
+     * `files.<your domain name>`
+     * `api.<your domain name>`
+     
+     (*for example, `app.trains.mydomainname.com`, `files.trains.mydomainname.com` and `api.trains.mydomainname.com`*)
+2. Point the records you created to the load balancer
+3. Configure the load balancer to redirect traffic coming from the records you created:
+     * `app.<your domain name>` should be redirected to k8s cluster nodes on port `30080`
+     * `files.<your domain name>` should be redirected to k8s cluster nodes on port `30081`
+     * `api.<your domain name>` should be redirected to k8s cluster nodes on port `30008`
 
 ## Additional Configuration for trains-server
 

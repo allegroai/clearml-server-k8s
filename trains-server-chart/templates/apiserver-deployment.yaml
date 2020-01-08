@@ -70,18 +70,24 @@ spec:
         name: apiserver
         resources:
           requests:
-            memory: "50M"
+            memory: "150M"
             cpu: "200m"
           limits:
-            memory: "100M"
+            memory: "150M"
             cpu: "400m"
         env:
-        - name: ELASTIC_SERVICE_HOST
+        - name: TRAINS_ELASTIC_SERVICE_HOST
           value: {{ .Values.apiserver.elasticServiceName }}
-        - name: MONGODB_SERVICE_HOST
+        - name: TRAINS_ELASTIC_SERVICE_PORT
+          value: "{{ .Values.apiserver.elasticServicePort }}"
+        - name: TRAINS_MONGODB_SERVICE_HOST
           value: {{ .Values.apiserver.mongoServiceName }}
-        - name: REDIS_SERVICE_HOST
+        - name: TRAINS_MONGODB_SERVICE_PORT
+          value: "{{ .Values.apiserver.mongoServicePort }}"
+        - name: TRAINS_REDIS_SERVICE_HOST
           value: {{ .Values.apiserver.redisServiceName }}
+        - name: TRAINS_REDIS_SERVICE_PORT
+          value: "{{ .Values.apiserver.redisServicePort }}"
         {{- if .Values.use_secrets_flexvolume }}
         - name: TRAINS_CONFIG_DIR
           value: /opt/trains/config:/opt/trains/secrets
