@@ -69,12 +69,9 @@ spec:
       - image: {{ .Values.trains.image.repository }}:{{ .Values.trains.image.tag }}
         name: apiserver
         resources:
-          requests:
-            memory: "150M"
-            cpu: "200m"
-          limits:
-            memory: "150M"
-            cpu: "400m"
+        {{- with .Values.apiserver.resources }}
+            {{- toYaml . | nindent 12 }}
+        {{- end }}
         env:
         - name: TRAINS_ELASTIC_SERVICE_HOST
           value: {{ .Values.apiserver.elasticServiceName }}

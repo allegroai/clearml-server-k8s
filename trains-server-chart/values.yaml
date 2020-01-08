@@ -24,6 +24,13 @@ apiserver:
     - name: apiserver-hostpath1
       hostPath:
         path: /opt/trains/config
+  resources:
+    requests:
+        memory: "150M"
+        cpu: "200m"
+    limits:
+        memory: "150M"
+        cpu: "400m"
 elasticsearch:
   esJavaOpts: "-Xms2g -Xmx2g"
 services:
