@@ -11,6 +11,19 @@ apiserver:
   mongoServicePort: "27017"
   redisServiceName: redis
   redisServicePort: "6379"
+  configDir: /opt/trains/config
+  volumeMounts:
+    - mountPath: /var/log/trains
+      name: apiserver-hostpath0
+    - mountPath: /opt/trains/config
+      name: apiserver-hostpath1
+  volumes:
+    - name: apiserver-hostpath0
+      hostPath:
+        path: /opt/trains/logs
+    - name: apiserver-hostpath1
+      hostPath:
+        path: /opt/trains/config
 elasticsearch:
   esJavaOpts: "-Xms2g -Xmx2g"
 services:
@@ -29,3 +42,4 @@ services:
     name: elasticsearch-service
   redis:
     name: redis
+use_secrets_flexvolume: false
