@@ -3,7 +3,7 @@ trains:
   namespace: trains
   image:
     repository: allegroai/trains-server
-    tag: 0.13.0-260
+    tag: 0.13.0-262
 apiserver:
   elasticServiceName: elasticsearch-service
   elasticServicePort: "9200"
@@ -33,6 +33,20 @@ apiserver:
         cpu: "400m"
 elasticsearch:
   esJavaOpts: "-Xms2g -Xmx2g"
+agent:
+  numberOfTrainsAgents: 0
+  nvidiaGpusPerAgent: 1
+  defaultBaseDocker: "nvidia/cuda"
+  trainsApiHost: "https://api.trains.mydomain.com"
+  trainsWebHost: "https://app.trains.mydomain.com"
+  trainsFilesHost: "https://files.trains.mydomain.com"
+  trainsGitUser: null
+  trainsGitPassword: null
+  awsKeyId: null
+  awsAccessKey: null
+  awsDefaultRegion: null
+  azureStorageAccount: null
+  azureStorageKey: null
 services:
   webserver:
     nodePort: 30080
