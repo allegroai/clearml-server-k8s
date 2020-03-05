@@ -59,7 +59,8 @@ spec:
                     values:
                     - trains
       containers:
-      - image: allegroai/trains-server:0.13.0
+      - image: allegroai/trains-server:latest
+        imagePullPolicy: Always
         name: apiserver
         resources:
           requests:
@@ -81,6 +82,10 @@ spec:
           value: redis
         - name: TRAINS_REDIS_SERVICE_PORT
           value: "6379"
+        - name: TRAINS__apiserver__mongo__pre_populate__enabled
+          value: "true"
+        - name: TRAINS__apiserver__mongo__pre_populate__zip_file
+          value: "/opt/trains/db-pre-populate/export.zip"
         args:
         - apiserver
         volumeMounts:

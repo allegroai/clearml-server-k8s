@@ -54,7 +54,8 @@ spec:
                     values:
                     - trains
       containers:
-      - image: allegroai/trains-server:0.13.0
+      - image: allegroai/trains-server:latest
+        imagePullPolicy: Always
         name: fileserver
         resources:
           requests:

@@ -85,13 +85,11 @@ For information about setting this parameter on other systems, see the [elastic 
 
         git clone https://github.com/allegroai/trains-server-k8s.git && cd trains-server-k8s
 
-1. Create the trains `namespace` (all deployment is in trains `namespace`):
+1. Create the trains `namespace` ans deployments:
 
-        kubectl apply -f trains-namespace.yaml 
-        
-1. Create all the deployments:
+        kubectl apply -k overlays/current_version 
 
-        kubectl apply -f .
+    NOTE: This will install the templates for the current **trains-server** version and update patch versions whenever the deployment is restarted (or reinstalled). In order to use the latest version (not recommended!), use `kubectl apply -k base`. 
     
 ## Updating trains-server application in Kubernetes Clusters
 

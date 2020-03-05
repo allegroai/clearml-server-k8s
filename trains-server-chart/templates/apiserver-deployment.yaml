@@ -85,6 +85,10 @@ spec:
           value: {{ .Values.apiserver.redisServiceName }}
         - name: TRAINS_REDIS_SERVICE_PORT
           value: "{{ .Values.apiserver.redisServicePort }}"
+        - name: TRAINS__apiserver__mongo__pre_populate__enabled
+          value: "{{ .Values.apiserver.mongoPrepopulateEnabled }}"
+        - name: TRAINS__apiserver__mongo__pre_populate__zip_file
+          value: "{{ .Values.apiserver.mongoPrepopulateZipFile }}"
         {{- if .Values.use_secrets_flexvolume }}
         - name: TRAINS_CONFIG_DIR
           value: /opt/trains/config:/opt/trains/secrets
@@ -94,7 +98,7 @@ spec:
         {{- end }}
         args:
         - apiserver
-        volumeMounts: 
+        volumeMounts:
         {{- if .Values.use_secrets_flexvolume }}
             - mountPath: /opt/trains/secrets
               name: apiserver-azurekeyvault
