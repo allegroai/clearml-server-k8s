@@ -3,7 +3,7 @@ trains:
   namespace: trains
   image:
     repository: allegroai/trains-server
-    tag: 0.14.0-305
+    tag: 0.14.1-317
 apiserver:
   elasticServiceName: elasticsearch-service
   elasticServicePort: "9200"
@@ -21,11 +21,11 @@ apiserver:
       name: apiserver-hostpath1
   volumes:
     - name: apiserver-hostpath0
-      hostPath:
-        path: /opt/trains/logs
+      persistentVolumeClaim:
+        claimName: apiserver-pv-claim0
     - name: apiserver-hostpath1
-      hostPath:
-        path: /opt/trains/config
+      persistentVolumeClaim:
+        claimName: apiserver-pv-claim1
   resources:
     requests:
         memory: "150M"
@@ -35,20 +35,39 @@ apiserver:
         cpu: "400m"
 elasticsearch:
   esJavaOpts: "-Xms2g -Xmx2g"
+  esMemoryRequest: "4G"
+  esMemoryLimit: "4.6G"
 agent:
   numberOfTrainsAgents: 0
   nvidiaGpusPerAgent: 1
   defaultBaseDocker: "nvidia/cuda"
+  agentVersion: ""
   trainsApiHost: "https://api.trains.mydomain.com"
   trainsWebHost: "https://app.trains.mydomain.com"
   trainsFilesHost: "https://files.trains.mydomain.com"
   trainsGitUser: null
   trainsGitPassword: null
-  awsKeyId: null
-  awsAccessKey: null
+  trainsAccessKey: null
+  trainsSecretKey: null
+  awsAccessKeyId: null
+  awsSecretAccessKey: null
   awsDefaultRegion: null
   azureStorageAccount: null
   azureStorageKey: null
+storage:
+  use_nfs: false
+  nfs:
+    base_path: /data/trains
+    server: null
+  capacities:
+    elasticsearch: 50Gi
+    mongo0: 50Gi
+    mongo1: 1Gi
+    redis: 5Gi
+    fileserver0: 5Gi
+    fileserver1: 50Gi
+    apiserver0: 10Gi
+    apiserver1: 1Gi
 services:
   webserver:
     nodePort: 30080

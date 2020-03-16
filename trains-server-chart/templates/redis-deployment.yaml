@@ -79,5 +79,5 @@ spec:
         {{ .Values.trains.nodeSelector}}
       volumes:
       - name: redis-data
-        hostPath:
-          path: /opt/trains/data/redis
+        persistentVolumeClaim:
+          claimName: redis-pv-claim

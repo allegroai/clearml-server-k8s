@@ -86,8 +86,8 @@ spec:
         {{ .Values.trains.nodeSelector}}
       volumes:
       - name: fileserver-hostpath0
-        hostPath:
-          path: /opt/trains/logs
+        persistentVolumeClaim:
+          claimName: fileserver-pv-claim0
       - name: fileserver-hostpath1
-        hostPath:
-          path: /opt/trains/data/fileserver
+        persistentVolumeClaim:
+          claimName: fileserver-pv-claim1

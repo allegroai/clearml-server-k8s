@@ -104,11 +104,10 @@ spec:
           value: {{ .Values.elasticsearch.esJavaOpts }}
         resources:
           requests:
-            memory: "2.3G"
+            memory: {{ .Values.elasticsearch.esMemoryRequest }}
             cpu: "600m"
           limits:
-            memory: "2.6G"
-            cpu: "1"
+            memory: {{ .Values.elasticsearch.esMemoryLimit }}
         image: docker.elastic.co/elasticsearch/elasticsearch:5.6.16
         name: elasticsearch
         ports:
@@ -121,5 +120,5 @@ spec:
         {{ .Values.trains.nodeSelector }}
       volumes:
       - name: elasticsearch-hostpath
-        hostPath:
-          path: /opt/trains/data/elastic
+        persistentVolumeClaim:
+          claimName: elasticsearch-pv-claim

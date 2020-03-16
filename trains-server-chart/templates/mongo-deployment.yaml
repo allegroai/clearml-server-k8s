@@ -82,8 +82,8 @@ spec:
         {{ .Values.trains.nodeSelector}}
       volumes:
       - name: mongo-hostpath0
-        hostPath:
-          path: /opt/trains/data/mongo/db
+        persistentVolumeClaim:
+          claimName: mongo-pv-claim0
       - name: mongo-hostpath1
-        hostPath:
-          path: /opt/trains/data/mongo/configdb
+        persistentVolumeClaim:
+          claimName: mongo-pv-claim1

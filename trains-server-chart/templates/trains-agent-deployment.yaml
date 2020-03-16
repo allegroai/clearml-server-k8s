@@ -44,6 +44,8 @@ spec:
         volumeMounts:
           - name: dockersock
             mountPath: "/var/run/docker.sock"
+          - name: agent-data
+            mountPath: /root/.trains
         env:
           - name: TRAINS_API_HOST
             value: {{ .Values.agent.trainsApiHost}}
@@ -55,10 +57,14 @@ spec:
             value: {{ .Values.agent.trainsGitUser}}
           - name: TRAINS_GIT_PASSWORD
             value: {{ .Values.agent.trainsGitPassword}}
+          - name: TRAINS_API_ACCESS_KEY
+            value: {{ .Values.agent.trainsAccessKey}}
+          - name: TRAINS_API_SECRET_KEY
+            value: {{ .Values.agent.trainsSecretKey}}
           - name: AWS_ACCESS_KEY_ID
-            value: {{ .Values.agent.awsKeyId}}
+            value: {{ .Values.agent.awsAccessKeyId}}
           - name: AWS_SECRET_ACCESS_KEY
-            value: {{ .Values.agent.awsAccessKey}}
+            value: {{ .Values.agent.awsSecretAccessKey}}
           - name: AWS_DEFAULT_REGION
             value: {{ .Values.agent.awsDefaultRegion}}
           - name: AZURE_STORAGE_ACCOUNT
@@ -69,13 +75,16 @@ spec:
           - /bin/sh
           - -c
           - "apt-get update ;
-             apt-get install -y curl python3-pip ;
+             apt-get install -y curl python3-pip git;
              curl -sSL https://get.docker.com/ | sh ;
              python3 -m pip install -U pip ;
-             python3 -m pip install trains-agent ;
-             trains-agent daemon"
+             python3 -m pip install trains-agent{{ .Values.agent.agentVersion}} ;
+             TRAINS_DOCKER_SKIP_GPUS_FLAG=1 TRAINS_AGENT_K8S_HOST_MOUNT=/root/.trains:/root/.trains trains-agent daemon --docker {{ .Values.agent.defaultBaseDocker}} --force-current-version"
       volumes:
       - name: dockersock
         hostPath:
           path: /var/run/docker.sock
+      - name: agent-data
+        hostPath:
+          path: /root/.trains/
       restartPolicy: Always
