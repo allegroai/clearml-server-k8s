@@ -10,3 +10,4 @@ resources:
   - redis-deployment.yaml
   - trains-namespace.yaml
   - webserver-deployment.yaml
+  - agentservices-deployment.yaml

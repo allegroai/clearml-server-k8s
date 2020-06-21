@@ -53,9 +53,9 @@ spec:
             value: {{ .Values.agent.trainsWebHost}}
           - name: TRAINS_FILES_HOST
             value: {{ .Values.agent.trainsFilesHost}}
-          - name: TRAINS_GIT_USER
+          - name: TRAINS_AGENT_GIT_USER
             value: {{ .Values.agent.trainsGitUser}}
-          - name: TRAINS_GIT_PASSWORD
+          - name: TRAINS_AGENT_GIT_PASS
             value: {{ .Values.agent.trainsGitPassword}}
           - name: TRAINS_API_ACCESS_KEY
             value: {{ .Values.agent.trainsAccessKey}}

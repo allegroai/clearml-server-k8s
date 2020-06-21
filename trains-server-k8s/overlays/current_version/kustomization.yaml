@@ -6,4 +6,4 @@ bases:
   - ../../base
 images:
   - name: allegroai/trains-server
-    newTag: "0.14"
+    newTag: "0.15"

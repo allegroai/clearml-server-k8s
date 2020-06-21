@@ -82,6 +82,8 @@ spec:
           value: redis
         - name: TRAINS_REDIS_SERVICE_PORT
           value: "6379"
+        - name: TRAINS_SERVER_DEPLOYMENT_TYPE
+          value: "k8s"
         - name: TRAINS__apiserver__mongo__pre_populate__enabled
           value: "true"
         - name: TRAINS__apiserver__mongo__pre_populate__zip_file

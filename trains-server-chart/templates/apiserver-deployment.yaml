@@ -89,6 +89,8 @@ spec:
           value: "{{ .Values.apiserver.mongoPrepopulateEnabled }}"
         - name: TRAINS__apiserver__mongo__pre_populate__zip_file
           value: "{{ .Values.apiserver.mongoPrepopulateZipFile }}"
+        - name: TRAINS_SERVER_DEPLOYMENT_TYPE
+          value: {{ .Values.apiserver.deploymentType }}
         {{- if .Values.use_secrets_flexvolume }}
         - name: TRAINS_CONFIG_DIR
           value: /opt/trains/config:/opt/trains/secrets

@@ -3,7 +3,7 @@ trains:
   namespace: trains
   image:
     repository: allegroai/trains-server
-    tag: 0.14.1-317
+    tag: 0.15.0-352
 apiserver:
   elasticServiceName: elasticsearch-service
   elasticServicePort: "9200"
@@ -13,6 +13,7 @@ apiserver:
   redisServicePort: "6379"
   mongoPrepopulateEnabled: "true"
   mongoPrepopulateZipFile: "/opt/trains/db-pre-populate/export.zip"
+  deploymentType: "Helm"
   configDir: /opt/trains/config
   volumeMounts:
     - mountPath: /var/log/trains
@@ -54,6 +55,25 @@ agent:
   awsDefaultRegion: null
   azureStorageAccount: null
   azureStorageKey: null
+agentservices:
+  trainsHostIp: null
+  defaultBaseDocker: "ubuntu:18.04"
+  agentVersion: ""
+  trainsApiHost: "http://apiserver-service:8008"
+  trainsWebHost: null
+  trainsFilesHost: null
+  trainsGitUser: null
+  trainsGitPassword: null
+  trainsAccessKey: null
+  trainsSecretKey: null
+  awsAccessKeyId: null
+  awsSecretAccessKey: null
+  awsDefaultRegion: null
+  azureStorageAccount: null
+  azureStorageKey: null
+  googleCredentials: null
+  trainsWorkerId: "trains-services"
+  trainsDockerHostMount: "/opt/trains/agent:/root/.trains"
 storage:
   use_nfs: false
   nfs:
@@ -84,6 +104,8 @@ services:
     name: elasticsearch-service
   redis:
     name: redis
+  agentservices:
+    name: agentservices-service
 ingress:
     enabled: false
     name: trains-server-ingress

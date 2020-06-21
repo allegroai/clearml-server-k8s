@@ -1,0 +1,93 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/name: agentservices
+    app.kubernetes.io/instance: trains-server
+    app.kubernetes.io/part-of: trains-server
+  name: agent-services
+  namespace: trains
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: agentservices
+      app.kubernetes.io/instance: trains-server
+      app.kubernetes.io/part-of: trains-server
+  minReadySeconds: 20
+  progressDeadlineSeconds: 30
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: agentservices
+        app.kubernetes.io/instance: trains-server
+        app.kubernetes.io/part-of: trains-server
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: app
+                    operator: In
+                    values:
+                    - trains
+      containers:
+      - image: allegroai/trains-agent-services:latest
+        imagePullPolicy: Always
+        name: agentservices
+        env:
+        - name: TRAINS_HOST_IP
+          value: ${TRAINS_HOST_IP}
+        - name: TRAINS_WEB_HOST
+          value: ${TRAINS_WEB_HOST:-}
+        - name: TRAINS_API_HOST
+          value: "http://apiserver-service:8008"
+        - name: TRAINS_FILES_HOST
+          value: ${TRAINS_FILES_HOST:-}
+        - name: TRAINS_API_ACCESS_KEY
+          value: ${TRAINS_API_ACCESS_KEY:-}
+        - name: TRAINS_API_SECRET_KEY
+          value: ${TRAINS_API_SECRET_KEY:-}
+        - name: TRAINS_AGENT_GIT_USER
+          value: ${TRAINS_AGENT_GIT_USER}
+        - name: TRAINS_AGENT_GIT_PASS
+          value: ${TRAINS_AGENT_GIT_PASS}
+        - name: TRAINS_AGENT_UPDATE_VERSION
+          value: ${TRAINS_AGENT_UPDATE_VERSION:->=0.15.0}
+        - name: TRAINS_AGENT_DEFAULT_BASE_DOCKER
+          value: "ubuntu:18.04"
+        - name: AWS_ACCESS_KEY_ID
+          value: ${AWS_ACCESS_KEY_ID:-}
+        - name: AWS_SECRET_ACCESS_KEY
+          value: ${AWS_SECRET_ACCESS_KEY:-}
+        - name: AWS_DEFAULT_REGION
+          value: ${AWS_DEFAULT_REGION:-}
+        - name: AZURE_STORAGE_ACCOUNT
+          value: ${AZURE_STORAGE_ACCOUNT:-}
+        - name: AZURE_STORAGE_KEY
+          value: ${AZURE_STORAGE_KEY:-}
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: ${GOOGLE_APPLICATION_CREDENTIALS:-}
+        - name: TRAINS_WORKER_ID
+          value: "trains-services"
+        - name: TRAINS_AGENT_DOCKER_HOST_MOUNT
+          value: "/opt/trains/agent:/root/.trains"
+        args:
+        - agentservices
+        volumeMounts:
+        - mountPath: /var/run/docker.sock
+          name: dockersock
+        - mountPath: /root/.trains
+          name: agent-data
+      restartPolicy: Always
+      nodeSelector:
+        app: trains
+      volumes:
+      - name: dockersock
+        hostPath:
+          path: /var/run/docker.sock
+      - name: agent-data
+        hostPath:
+          path: /opt/trains/agent
