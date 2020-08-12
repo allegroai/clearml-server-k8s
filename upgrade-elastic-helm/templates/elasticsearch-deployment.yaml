@@ -1,0 +1,124 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.services.elasticsearch.name}}
+  labels:
+    app.kubernetes.io/name: elasticsearch
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/part-of: trains-server
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+  namespace: {{ .Values.trains.namespace }}
+spec:
+  selector:
+    app.kubernetes.io/name: elasticsearch
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/part-of: trains-server
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+  type: ClusterIP
+  ports:
+  - protocol: TCP
+    port: 9200
+    targetPort: 9200
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/name: elasticsearch
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/part-of: trains-server
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+  name: elasticsearch
+  namespace: {{ .Values.trains.namespace }}
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: elasticsearch
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      app.kubernetes.io/part-of: trains-server
+      app.kubernetes.io/managed-by: {{ .Release.Service }}
+  minReadySeconds: 50
+  progressDeadlineSeconds: 60
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: elasticsearch
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/part-of: trains-server
+        app.kubernetes.io/managed-by: {{ .Release.Service }}
+        helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - trains
+      initContainers:
+      - name: set-dir-owner
+        image: centos:7
+        command: ['sh', '-c', 'chown -R 1000:1000 /usr/share/elasticsearch/data']
+        volumeMounts:
+        - name: elasticsearch-hostpath
+          mountPath: /usr/share/elasticsearch/data
+      containers:
+      - env:
+        - name: bootstrap.memory_lock
+          value: "true"
+        - name: cluster.name
+          value: trains
+        - name: cluster.routing.allocation.node_initial_primaries_recoveries
+          value: "500"
+        - name: discovery.zen.minimum_master_nodes
+          value: "1"
+        - name: http.compression_level
+          value: "7"
+        - name: node.ingest
+          value: "true"
+        - name: node.name
+          value: trains
+        - name: reindex.remote.whitelist
+          value: "*.*"
+        - name: script.inline
+          value: "true"
+        - name: script.painless.regex.enabled
+          value: "true"
+        - name: script.update
+          value: "true"
+        - name: thread_pool.bulk.queue_size
+          value: "2000"
+        - name: thread_pool.search.queue_size
+          value: "10000"
+        - name: xpack.monitoring.enabled
+          value: "false"
+        - name: xpack.security.enabled
+          value: "false"
+        - name: ES_JAVA_OPTS
+          value: {{ .Values.elasticsearch.esJavaOpts }}
+        resources:
+          requests:
+            memory: {{ .Values.elasticsearch.esMemoryRequest }}
+            cpu: "600m"
+          limits:
+            memory: {{ .Values.elasticsearch.esMemoryLimit }}
+        image: docker.elastic.co/elasticsearch/elasticsearch:5.6.16
+        name: elasticsearch
+        ports:
+        - containerPort: 9200
+        volumeMounts:
+        - mountPath: /usr/share/elasticsearch/data
+          name: elasticsearch-hostpath
+      restartPolicy: Always
+      nodeSelector:
+        {{ .Values.trains.nodeSelector }}
+      volumes:
+      - name: elasticsearch-hostpath
+        persistentVolumeClaim:
+          claimName: elasticsearch-pv-claim

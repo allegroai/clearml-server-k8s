@@ -1,0 +1,10 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: upgrade-elastic
+commonAnnotations:
+  kustomize.generated.resource: "true"
+bases:
+  - ../../base
+images:
+  - name: allegroai/trains-server
+    newTag: "0.16"

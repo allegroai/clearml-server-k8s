@@ -1,0 +1,109 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/name: elasticsearch7
+    app.kubernetes.io/instance: trains-server
+    app.kubernetes.io/part-of: trains-server
+  name: elasticsearch7-service
+  namespace: upgrade-elastic
+spec:
+  selector:
+    app.kubernetes.io/name: elasticsearch7
+    app.kubernetes.io/instance: trains-server
+    app.kubernetes.io/part-of: trains-server
+  type: ClusterIP
+  ports:
+  - protocol: TCP
+    port: 9211
+    targetPort: 9200
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/name: elasticsearch7
+    app.kubernetes.io/instance: trains-server
+    app.kubernetes.io/part-of: trains-server
+  name: elasticsearch7
+  namespace: upgrade-elastic
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: elasticsearch7
+      app.kubernetes.io/instance: trains-server
+      app.kubernetes.io/part-of: trains-server
+  minReadySeconds: 50
+  progressDeadlineSeconds: 60
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: elasticsearch7
+        app.kubernetes.io/instance: trains-server
+        app.kubernetes.io/part-of: trains-server
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - trains
+      initContainers:
+      - name: set-dir-owner
+        image: centos:7
+        command: ['sh', '-c', 'chown -R 1000:1000 /usr/share/elasticsearch/data']
+        volumeMounts:
+        - name: elasticsearch7-hostpath
+          mountPath: /usr/share/elasticsearch/data
+      containers:
+      - env:
+        - name: bootstrap.memory_lock
+          value: "true"
+        - name: cluster.name
+          value: trains
+        - name: cluster.routing.allocation.node_initial_primaries_recoveries
+          value: "500"
+        - name: discovery.zen.minimum_master_nodes
+          value: "1"
+        - name: discovery.type
+          value: "single-node"
+        - name: http.compression_level
+          value: "7"
+        - name: node.ingest
+          value: "true"
+        - name: node.name
+          value: trains
+        - name: reindex.remote.whitelist
+          value: "elasticsearch-service:9200"
+        - name: xpack.monitoring.enabled
+          value: "false"
+        - name: xpack.security.enabled
+          value: "false"
+        - name: ES_JAVA_OPTS
+          value: "-Xms2g -Xmx2g"
+        resources:
+          requests:
+            memory: "2.3G"
+            cpu: "600m"
+          limits:
+            memory: "2.6G"
+            cpu: "1"
+        image: docker.elastic.co/elasticsearch/elasticsearch:7.6.2
+        name: elasticsearch7
+        ports:
+        - containerPort: 9211
+        volumeMounts:
+        - mountPath: /usr/share/elasticsearch/data
+          name: elasticsearch7-hostpath
+      restartPolicy: Always
+      nodeSelector:
+        app: trains
+      volumes:
+      - name: elasticsearch7-hostpath
+        hostPath:
+          path: /opt/trains/data/elastic_7

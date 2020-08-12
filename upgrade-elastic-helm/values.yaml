@@ -1,0 +1,27 @@
+trains:
+  nodeSelector: "app: trains"
+  namespace: upgrade-elastic
+elasticsearch:
+  esJavaOpts: "-Xms2g -Xmx2g"
+  esMemoryRequest: "4G"
+  esMemoryLimit: "4.6G"
+elasticsearch7:
+  esJavaOpts: "-Xms2g -Xmx2g"
+  esMemoryRequest: "4G"
+  esMemoryLimit: "4.6G"
+storage:
+  use_nfs: false
+  nfs:
+    base_path: /data/trains
+    server: null
+  capacities:
+    elasticsearch: 50Gi
+    elasticsearch7: 50Gi
+services:
+  elasticsearch:
+    name: elasticsearch-service
+  elasticsearch7:
+    name: elasticsearch7-service
+  upgrade:
+    name: upgrade-job
+use_secrets_flexvolume: false

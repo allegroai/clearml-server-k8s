@@ -1,0 +1,24 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: upgrade
+  namespace: upgrade-elastic
+spec:
+  template:
+    spec:
+      containers:
+      - name: upgrade
+        image: python:3.8.5-slim
+        command: ["/bin/sh", "-c"]
+        args: ["apt-get update; apt-get install -y curl ; for i in {0..3}; do if [ $(curl -LI http://elasticsearch7-service:9211 -o /dev/null -w '%{http_code}\n' -s) -ne \"200\" ] ; then sleep 30s; else break; fi; done ; pip3 install requests ; python3 /usr/share/upgrade_files/upgrade_to_7.py --source http://elasticsearch-service:9200 --destination http://elasticsearch7-service:9211 --remote-source http://elasticsearch-service:9200"]
+        volumeMounts:
+          - mountPath: /usr/share/upgrade_files
+            name: upgrade-script
+      restartPolicy: Never
+      volumes:
+        - name: upgrade-script
+          hostPath:
+            path: /opt/trains/upgrade_files
+      nodeSelector:
+        app: trains
+  backoffLimit: 4

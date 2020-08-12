@@ -1,0 +1,65 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: elasticsearch-pv
+  labels:
+    type: local
+spec:
+  storageClassName: "elasticsearch"
+  capacity:
+    storage: {{ .Values.storage.capacities.elasticsearch }}
+  accessModes:
+    - ReadWriteOnce
+  {{- if .Values.storage.use_nfs }}
+  nfs:
+    server: {{ .Values.storage.nfs.server }}
+    path: "{{ .Values.storage.nfs.base_path }}/data/elastic"
+  {{ else }}
+  hostPath:
+    path: "/opt/trains/data/elastic"
+  {{- end }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: elasticsearch-pv-claim
+spec:
+  resources:
+    requests:
+      storage: {{ .Values.storage.capacities.elasticsearch }}
+  storageClassName: "elasticsearch"
+  accessModes:
+    - ReadWriteOnce
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: elasticsearch7-pv
+  labels:
+    type: local
+spec:
+  storageClassName: "elasticsearch7"
+  capacity:
+    storage: {{ .Values.storage.capacities.elasticsearch7 }}
+  accessModes:
+    - ReadWriteOnce
+  {{- if .Values.storage.use_nfs }}
+  nfs:
+    server: {{ .Values.storage.nfs.server }}
+    path: "{{ .Values.storage.nfs.base_path }}/data/elastic"
+  {{ else }}
+  hostPath:
+    path: "/opt/trains/data/elastic_7"
+  {{- end }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: elasticsearch7-pv-claim
+spec:
+  resources:
+    requests:
+      storage: {{ .Values.storage.capacities.elasticsearch7 }}
+  storageClassName: "elasticsearch7"
+  accessModes:
+    - ReadWriteOnce
