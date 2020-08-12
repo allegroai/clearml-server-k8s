@@ -16,7 +16,7 @@ spec:
     path: "{{ .Values.storage.nfs.base_path }}/data/elastic"
   {{ else }}
   hostPath:
-    path: "/opt/trains/data/elastic"
+    path: "/opt/trains/data/elastic_7"
   {{- end }}
 ---
 apiVersion: v1

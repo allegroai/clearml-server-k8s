@@ -70,6 +70,8 @@ spec:
           value: "500"
         - name: discovery.zen.minimum_master_nodes
           value: "1"
+        - name: discovery.type
+          value: "single-node"
         - name: http.compression_level
           value: "7"
         - name: node.ingest
@@ -78,16 +80,6 @@ spec:
           value: trains
         - name: reindex.remote.whitelist
           value: '*.*'
-        - name: script.inline
-          value: "true"
-        - name: script.painless.regex.enabled
-          value: "true"
-        - name: script.update
-          value: "true"
-        - name: thread_pool.bulk.queue_size
-          value: "2000"
-        - name: thread_pool.search.queue_size
-          value: "10000"
         - name: xpack.monitoring.enabled
           value: "false"
         - name: xpack.security.enabled
@@ -101,7 +93,7 @@ spec:
           limits:
             memory: "2.6G"
             cpu: "1"
-        image: docker.elastic.co/elasticsearch/elasticsearch:5.6.16
+        image: docker.elastic.co/elasticsearch/elasticsearch:7.6.2
         name: elasticsearch
         ports:
         - containerPort: 9200
@@ -114,4 +106,4 @@ spec:
       volumes:
       - name: elasticsearch-hostpath
         hostPath:
-          path: /opt/trains/data/elastic
+          path: /opt/trains/data/elastic_7
