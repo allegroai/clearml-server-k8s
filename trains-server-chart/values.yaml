@@ -3,7 +3,7 @@ trains:
   namespace: trains
   image:
     repository: allegroai/trains-server
-    tag: 0.16.0-299
+    tag: 0.16.0-306
 apiserver:
   elasticServiceName: elasticsearch-service
   elasticServicePort: "9200"
