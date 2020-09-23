@@ -38,42 +38,43 @@ spec:
         imagePullPolicy: Always
         name: agentservices
         env:
-        - name: TRAINS_HOST_IP
-          value: ${TRAINS_HOST_IP}
-        - name: TRAINS_WEB_HOST
-          value: ${TRAINS_WEB_HOST:-}
         - name: TRAINS_API_HOST
           value: "http://apiserver-service:8008"
-        - name: TRAINS_FILES_HOST
-          value: ${TRAINS_FILES_HOST:-}
-        - name: TRAINS_API_ACCESS_KEY
-          value: ${TRAINS_API_ACCESS_KEY:-}
-        - name: TRAINS_API_SECRET_KEY
-          value: ${TRAINS_API_SECRET_KEY:-}
-        - name: TRAINS_AGENT_GIT_USER
-          value: ${TRAINS_AGENT_GIT_USER}
-        - name: TRAINS_AGENT_GIT_PASS
-          value: ${TRAINS_AGENT_GIT_PASS}
-        - name: TRAINS_AGENT_UPDATE_VERSION
-          value: ${TRAINS_AGENT_UPDATE_VERSION:->=0.15.0}
         - name: TRAINS_AGENT_DEFAULT_BASE_DOCKER
           value: "ubuntu:18.04"
-        - name: AWS_ACCESS_KEY_ID
-          value: ${AWS_ACCESS_KEY_ID:-}
-        - name: AWS_SECRET_ACCESS_KEY
-          value: ${AWS_SECRET_ACCESS_KEY:-}
-        - name: AWS_DEFAULT_REGION
-          value: ${AWS_DEFAULT_REGION:-}
-        - name: AZURE_STORAGE_ACCOUNT
-          value: ${AZURE_STORAGE_ACCOUNT:-}
-        - name: AZURE_STORAGE_KEY
-          value: ${AZURE_STORAGE_KEY:-}
-        - name: GOOGLE_APPLICATION_CREDENTIALS
-          value: ${GOOGLE_APPLICATION_CREDENTIALS:-}
         - name: TRAINS_WORKER_ID
           value: "trains-services"
         - name: TRAINS_AGENT_DOCKER_HOST_MOUNT
           value: "/opt/trains/agent:/root/.trains"
+        #  Fill in the following in order set the values for trains-agent:
+        # - name: TRAINS_HOST_IP
+        #   value: ""
+        # - name: TRAINS_WEB_HOST
+        #   value: ""
+        # - name: TRAINS_FILES_HOST
+        #   value: ""
+        # - name: TRAINS_API_ACCESS_KEY
+        #   value: ""
+        # - name: TRAINS_API_SECRET_KEY
+        #   value: ""
+        # - name: TRAINS_AGENT_GIT_USER
+        #   value: ""
+        # - name: TRAINS_AGENT_GIT_PASS
+        #   value: ""
+        # - name: TRAINS_AGENT_UPDATE_VERSION
+        #   value: ""
+        # - name: AWS_ACCESS_KEY_ID
+        #   value: ""
+        # - name: AWS_SECRET_ACCESS_KEY
+        #   value: ""
+        # - name: AWS_DEFAULT_REGION
+        #   value: ""
+        # - name: AZURE_STORAGE_ACCOUNT
+        #   value: ""
+        # - name: AZURE_STORAGE_KEY
+        #   value: ""
+        # - name: GOOGLE_APPLICATION_CREDENTIALS
+        #   value: ""
         args:
         - agentservices
         volumeMounts:

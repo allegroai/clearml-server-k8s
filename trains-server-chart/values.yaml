@@ -11,8 +11,9 @@ apiserver:
   mongoServicePort: "27017"
   redisServiceName: redis
   redisServicePort: "6379"
-  mongoPrepopulateEnabled: "true"
-  mongoPrepopulateZipFile: "/opt/trains/db-pre-populate/export.zip"
+  prepopulateEnabled: "true"
+  prepopulateZipFiles: "/opt/trains/db-pre-populate"
+  prepopulateArtifactsPath: "/mnt/fileserver"
   deploymentType: "Helm"
   configDir: /opt/trains/config
   volumeMounts:

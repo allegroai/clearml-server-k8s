@@ -84,10 +84,12 @@ spec:
           value: "6379"
         - name: TRAINS_SERVER_DEPLOYMENT_TYPE
           value: "k8s"
-        - name: TRAINS__apiserver__mongo__pre_populate__enabled
+        - name: TRAINS__apiserver__pre_populate__enabled
           value: "true"
-        - name: TRAINS__apiserver__mongo__pre_populate__zip_file
-          value: "/opt/trains/db-pre-populate/export.zip"
+        - name: TRAINS__apiserver__pre_populate__zip_files
+          value: "/opt/trains/db-pre-populate"
+        - name: TRAINS__apiserver__pre_populate__artifacts_path
+          value: "/mnt/fileserver"
         args:
         - apiserver
         volumeMounts:
