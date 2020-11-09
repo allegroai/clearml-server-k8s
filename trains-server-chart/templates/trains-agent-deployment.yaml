@@ -79,7 +79,7 @@ spec:
              curl -sSL https://get.docker.com/ | sh ;
              python3 -m pip install -U pip ;
              python3 -m pip install trains-agent{{ .Values.agent.agentVersion}} ;
-             TRAINS_DOCKER_SKIP_GPUS_FLAG=1 TRAINS_AGENT_K8S_HOST_MOUNT=/root/.trains:/root/.trains trains-agent daemon --docker {{ .Values.agent.defaultBaseDocker}} --force-current-version"
+             TRAINS_AGENT_K8S_HOST_MOUNT=/root/.trains:/root/.trains trains-agent daemon"
       volumes:
       - name: dockersock
         hostPath:
