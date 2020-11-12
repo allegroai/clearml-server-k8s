@@ -43,6 +43,7 @@ agent:
   numberOfTrainsAgents: 0
   nvidiaGpusPerAgent: 1
   defaultBaseDocker: "nvidia/cuda"
+  dockerMode: true
   agentVersion: ""
   trainsApiHost: "https://api.trains.mydomain.com"
   trainsWebHost: "https://app.trains.mydomain.com"
