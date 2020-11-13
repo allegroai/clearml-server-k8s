@@ -45,6 +45,7 @@ agent:
   defaultBaseDocker: "nvidia/cuda"
   dockerMode: true
   agentVersion: ""
+  agentVersionComparisonOperator: "=="
   trainsApiHost: "https://api.trains.mydomain.com"
   trainsWebHost: "https://app.trains.mydomain.com"
   trainsFilesHost: "https://files.trains.mydomain.com"

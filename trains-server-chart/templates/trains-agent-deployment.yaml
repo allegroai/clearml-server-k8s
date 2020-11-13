@@ -78,7 +78,7 @@ spec:
              apt-get install -y curl python3-pip git;
              curl -sSL https://get.docker.com/ | sh ;
              python3 -m pip install -U pip ;
-             python3 -m pip install trains-agent{{- if .Values.agent.agentVersion}}=={{ end}}{{ .Values.agent.agentVersion}} ;
+             python3 -m pip install trains-agent{{- if .Values.agent.agentVersion}}{{ .Values.agent.agentVersionComparisonOperator}}{{ end}}{{ .Values.agent.agentVersion}} ;
              {{if .Values.agent.dockerMode}}TRAINS_DOCKER_SKIP_GPUS_FLAG=1 TRAINS_AGENT_K8S_HOST_MOUNT=/root/.trains:/root/.trains trains-agent daemon --docker {{ .Values.agent.defaultBaseDocker}} --force-current-version"
              {{ else}}TRAINS_AGENT_K8S_HOST_MOUNT=/root/.trains:/root/.trains trains-agent daemon"{{ end}}
       volumes:
