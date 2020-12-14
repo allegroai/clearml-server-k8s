@@ -39,28 +39,29 @@ elasticsearch:
   esJavaOpts: "-Xms2g -Xmx2g"
   esMemoryRequest: "4G"
   esMemoryLimit: "4.6G"
-agent:
-  numberOfTrainsAgents: 0
-  nvidiaGpusPerAgent: 1
-  defaultBaseDocker: "nvidia/cuda"
-  dockerMode: true
-  agentVersion: "" # if set, it *MUST* include comparison operator (e.g. ">=0.16.1")
-  queues: "default" # multiple queues can be specified separated by a space (e.g. "important_jobs default")
-  trainsApiHost: "http://apiserver-service:8008"
-  trainsWebHost: "http://webserver-service"
-  trainsFilesHost: "http://fileserver-service:8081"
-  trainsGitUser: null
-  trainsGitPassword: null
-  trainsAccessKey: null
-  trainsSecretKey: null
-  awsAccessKeyId: null
-  awsSecretAccessKey: null
-  awsDefaultRegion: null
-  azureStorageAccount: null
-  azureStorageKey: null
-  trainsConfig: |-
-    sdk {
-    }
+agentGroups:
+  - name: agent-group0
+    numberOfTrainsAgents: 0
+    nvidiaGpusPerAgent: 1
+    defaultBaseDocker: "nvidia/cuda"
+    dockerMode: true
+    agentVersion: "" # if set, it *MUST* include comparison operator (e.g. ">=0.16.1")
+    queues: "default" # multiple queues can be specified separated by a space (e.g. "important_jobs default")
+    trainsApiHost: "http://apiserver-service:8008"
+    trainsWebHost: "http://webserver-service"
+    trainsFilesHost: "http://fileserver-service:8081"
+    trainsGitUser: null
+    trainsGitPassword: null
+    trainsAccessKey: null
+    trainsSecretKey: null
+    awsAccessKeyId: null
+    awsSecretAccessKey: null
+    awsDefaultRegion: null
+    azureStorageAccount: null
+    azureStorageKey: null
+    trainsConfig: |-
+      sdk {
+      }
 agentservices:
   trainsHostIp: null
   defaultBaseDocker: "ubuntu:18.04"

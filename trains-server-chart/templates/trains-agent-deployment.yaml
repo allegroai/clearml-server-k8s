@@ -1,32 +1,34 @@
-{{ if .Values.agent.trainsConfig }}
+{{- range .Values.agentGroups }}
+---
+{{ if .trainsConfig }}
 apiVersion: v1
 kind: Secret
 metadata:
-  name: trains-agent-conf
+  name: {{ .name }}-conf
 data:
-  trains.conf: {{ .Values.agent.trainsConfig | b64enc }}
+  trains.conf: {{ .trainsConfig | b64enc }}
 ---
 {{ end }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app.kubernetes.io/name: trains-agent
-    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/name: {{ .name }}
+    app.kubernetes.io/instance: {{ $.Release.Name }}
     app.kubernetes.io/part-of: trains-server
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
-    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    app.kubernetes.io/managed-by: {{ $.Release.Service }}
+    helm.sh/chart: {{ $.Chart.Name }}-{{ $.Chart.Version | replace "+" "_" }}
     allegro.ai/node-type: trains-agent
-  name: trains-agent
-  namespace: {{ .Values.trains.namespace }}
+  name: {{ .name }}
+  namespace: {{ $.Values.trains.namespace }}
 spec:
-  replicas: {{ .Values.agent.numberOfTrainsAgents }}
+  replicas: {{ .numberOfTrainsAgents }}
   selector:
     matchLabels:
-          app.kubernetes.io/name: trains-agent
-          app.kubernetes.io/instance: {{ .Release.Name }}
+          app.kubernetes.io/name: {{ .name }}
+          app.kubernetes.io/instance: {{ $.Release.Name }}
           app.kubernetes.io/part-of: trains-server
-          app.kubernetes.io/managed-by: {{ .Release.Service }}
+          app.kubernetes.io/managed-by: {{ $.Release.Service }}
   minReadySeconds: 20
   progressDeadlineSeconds: 30
   strategy:
@@ -34,14 +36,12 @@ spec:
   template:
     metadata:
       labels:
-          app.kubernetes.io/name: trains-agent
-          app.kubernetes.io/instance: {{ .Release.Name }}
+          app.kubernetes.io/name: {{ .name }}
+          app.kubernetes.io/instance: {{ $.Release.Name }}
           app.kubernetes.io/part-of: trains-server
-          app.kubernetes.io/managed-by: {{ .Release.Service }}
-          helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+          app.kubernetes.io/managed-by: {{ $.Release.Service }}
+          helm.sh/chart: {{ $.Chart.Name }}-{{ $.Chart.Version | replace "+" "_" }}
           allegro.ai/node-type: trains-agent
-      annotations:
-        checksum/config: {{ toYaml .Values.agent.trainsConfig | b64enc | sha256sum }}
     spec:
       containers:
       - image: nvidia/cuda
@@ -51,45 +51,45 @@ spec:
         resources:
           limits:
             nvidia.com/gpu:
-              {{ .Values.agent.nvidiaGpusPerAgent }}
+              {{ .nvidiaGpusPerAgent }}
         volumeMounts:
-          {{if .Values.agent.dockerMode}}
+          {{if .dockerMode}}
           - name: dockersock
             mountPath: "/var/run/docker.sock"
           {{ end}}
-          - name: agent-data
-            mountPath: /root/.trains
-          {{ if .Values.agent.trainsConfig }}
+          {{ if .trainsConfig }}
           - name: agent-trains-conf-volume
             mountPath: "/root/trains.conf"
             subPath: trains.conf
             readOnly: true
           {{ end}}
+          - name: agent-data
+            mountPath: /root/.trains
         env:
           - name: TRAINS_API_HOST
-            value: {{ .Values.agent.trainsApiHost}}
+            value: {{ .trainsApiHost}}
           - name: TRAINS_WEB_HOST
-            value: {{ .Values.agent.trainsWebHost}}
+            value: {{ .trainsWebHost}}
           - name: TRAINS_FILES_HOST
-            value: {{ .Values.agent.trainsFilesHost}}
+            value: {{ .trainsFilesHost}}
           - name: TRAINS_AGENT_GIT_USER
-            value: {{ .Values.agent.trainsGitUser}}
+            value: {{ .trainsGitUser}}
           - name: TRAINS_AGENT_GIT_PASS
-            value: {{ .Values.agent.trainsGitPassword}}
+            value: {{ .trainsGitPassword}}
           - name: TRAINS_API_ACCESS_KEY
-            value: {{ .Values.agent.trainsAccessKey}}
+            value: {{ .trainsAccessKey}}
           - name: TRAINS_API_SECRET_KEY
-            value: {{ .Values.agent.trainsSecretKey}}
+            value: {{ .trainsSecretKey}}
           - name: AWS_ACCESS_KEY_ID
-            value: {{ .Values.agent.awsAccessKeyId}}
+            value: {{ .awsAccessKeyId}}
           - name: AWS_SECRET_ACCESS_KEY
-            value: {{ .Values.agent.awsSecretAccessKey}}
+            value: {{ .awsSecretAccessKey}}
           - name: AWS_DEFAULT_REGION
-            value: {{ .Values.agent.awsDefaultRegion}}
+            value: {{ .awsDefaultRegion}}
           - name: AZURE_STORAGE_ACCOUNT
-            value: {{ .Values.agent.azureStorageAccount}}
+            value: {{ .azureStorageAccount}}
           - name: AZURE_STORAGE_KEY
-            value: {{ .Values.agent.azureStorageKey}}
+            value: {{ .azureStorageKey}}
         command:
           - /bin/sh
           - -c
@@ -97,24 +97,25 @@ spec:
              apt-get install -y curl python3-pip git;
              curl -sSL https://get.docker.com/ | sh ;
              python3 -m pip install -U pip ;
-             python3 -m pip install trains-agent{{ .Values.agent.agentVersion}} ;
-             {{if .Values.agent.dockerMode}}TRAINS_DOCKER_SKIP_GPUS_FLAG=1 TRAINS_AGENT_K8S_HOST_MOUNT=/root/.trains:/root/.trains trains-agent daemon --docker {{ .Values.agent.defaultBaseDocker}} --force-current-version --queue {{ .Values.agent.queues}}"
-             {{ else}}TRAINS_AGENT_K8S_HOST_MOUNT=/root/.trains:/root/.trains trains-agent daemon --queue {{ .Values.agent.queues}}"{{ end}}
+             python3 -m pip install trains-agent{{ .agentVersion}} ;
+             {{if .dockerMode}}TRAINS_DOCKER_SKIP_GPUS_FLAG=1 TRAINS_AGENT_K8S_HOST_MOUNT=/root/.trains:/root/.trains trains-agent daemon --docker {{ .defaultBaseDocker}} --force-current-version --queue {{ .queues}}"
+             {{ else}}TRAINS_AGENT_K8S_HOST_MOUNT=/root/.trains:/root/.trains trains-agent daemon --queue {{ .queues}}"{{ end}}
       volumes:
-      {{if .Values.agent.dockerMode}}
+      {{if .dockerMode}}
       - name: dockersock
         hostPath:
           path: /var/run/docker.sock
       {{ end}}
-      - name: agent-data
-        hostPath:
-          path: /root/.trains/
-      {{ if .Values.agent.trainsConfig }}
+      {{ if .trainsConfig }}
       - name: agent-trains-conf-volume
         secret:
-          secretName: trains-agent-conf
+          secretName: {{ .name }}-conf
           items:
           - key: trains.conf
             path: trains.conf
       {{ end }}
+      - name: agent-data
+        hostPath:
+          path: /root/.trains/
       restartPolicy: Always
+{{- end }}
