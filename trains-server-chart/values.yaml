@@ -45,6 +45,7 @@ agent:
   defaultBaseDocker: "nvidia/cuda"
   dockerMode: true
   agentVersion: "" # if set, it *MUST* include comparison operator (e.g. ">=0.16.1")
+  queues: "default" # multiple queues can be specified separated by a space (e.g. "important_jobs default")
   trainsApiHost: "https://api.trains.mydomain.com"
   trainsWebHost: "https://app.trains.mydomain.com"
   trainsFilesHost: "https://files.trains.mydomain.com"
