@@ -1,3 +1,12 @@
+{{ if .Values.agent.trainsConfig }}
+apiVersion: v1
+kind: Secret
+metadata:
+  name: agent-trains-conf
+data:
+  trains.conf: {{ toYaml .Values.agent.trainsConfig | b64enc }}
+---
+{{ end }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -31,6 +40,8 @@ spec:
           app.kubernetes.io/managed-by: {{ .Release.Service }}
           helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
           allegro.ai/node-type: trains-agent
+      annotations:
+        checksum/config: {{ toYaml .Values.agent.trainsConfig | b64enc | sha256sum }}
     spec:
       containers:
       - image: nvidia/cuda
@@ -83,6 +94,12 @@ spec:
              python3 -m pip install trains-agent{{ .Values.agent.agentVersion}} ;
              {{if .Values.agent.dockerMode}}TRAINS_DOCKER_SKIP_GPUS_FLAG=1 TRAINS_AGENT_K8S_HOST_MOUNT=/root/.trains:/root/.trains trains-agent daemon --docker {{ .Values.agent.defaultBaseDocker}} --force-current-version --queue {{ .Values.agent.queues}}"
              {{ else}}TRAINS_AGENT_K8S_HOST_MOUNT=/root/.trains:/root/.trains trains-agent daemon --queue {{ .Values.agent.queues}}"{{ end}}
+        {{ if .Values.agent.trainsConfig }}
+        volumeMounts:
+          - name: agent-trains-conf-volume
+            mountPath: /root/trains.conf
+            subPath: trains.conf
+        {{ end }}
       volumes:
       {{if .Values.agent.dockerMode}}
       - name: dockersock
@@ -92,4 +109,9 @@ spec:
       - name: agent-data
         hostPath:
           path: /root/.trains/
+      {{ if .Values.agent.trainsConfig }}
+      - name: agent-trains-conf-volume
+        secret:
+          secretName: agent-trains-conf
+      {{ end }}
       restartPolicy: Always
