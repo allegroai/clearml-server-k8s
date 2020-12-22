@@ -1,3 +1,12 @@
+{{ if .Values.agent.trainsConfig }}
+apiVersion: v1
+kind: Secret
+metadata:
+  name: trains-agent-conf
+data:
+  trains.conf: {{ .Values.agent.trainsConfig | b64enc }}
+---
+{{ end }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -31,6 +40,8 @@ spec:
           app.kubernetes.io/managed-by: {{ .Release.Service }}
           helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
           allegro.ai/node-type: trains-agent
+      annotations:
+        checksum/config: {{ toYaml .Values.agent.trainsConfig | b64enc | sha256sum }}
     spec:
       containers:
       - image: nvidia/cuda
@@ -48,6 +59,12 @@ spec:
           {{ end}}
           - name: agent-data
             mountPath: /root/.trains
+          {{ if .Values.agent.trainsConfig }}
+          - name: agent-trains-conf-volume
+            mountPath: "/root/trains.conf"
+            subPath: trains.conf
+            readOnly: true
+          {{ end}}
         env:
           - name: TRAINS_API_HOST
             value: {{ .Values.agent.trainsApiHost}}
@@ -92,4 +109,12 @@ spec:
       - name: agent-data
         hostPath:
           path: /root/.trains/
+      {{ if .Values.agent.trainsConfig }}
+      - name: agent-trains-conf-volume
+        secret:
+          secretName: trains-agent-conf
+          items:
+          - key: trains.conf
+            path: trains.conf
+      {{ end }}
       restartPolicy: Always

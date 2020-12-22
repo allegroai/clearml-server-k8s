@@ -58,6 +58,9 @@ agent:
   awsDefaultRegion: null
   azureStorageAccount: null
   azureStorageKey: null
+  trainsConfig: |-
+    sdk {
+    }
 agentservices:
   trainsHostIp: null
   defaultBaseDocker: "ubuntu:18.04"
