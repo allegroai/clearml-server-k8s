@@ -2,9 +2,9 @@
 apiVersion: v1
 kind: Secret
 metadata:
-  name: agent-trains-conf
+  name: trains-agent-conf
 data:
-  trains.conf: {{ toYaml .Values.agent.trainsConfig | b64enc }}
+  trains.conf: {{ .Values.agent.trainsConfig | b64enc }}
 ---
 {{ end }}
 apiVersion: apps/v1
@@ -59,6 +59,10 @@ spec:
           {{ end}}
           - name: agent-data
             mountPath: /root/.trains
+          {{ if .Values.agent.trainsConfig }}
+          - name: agent-trains-conf-volume
+            mountPath: "/root"
+          {{ end}}
         env:
           - name: TRAINS_API_HOST
             value: {{ .Values.agent.trainsApiHost}}
@@ -94,12 +98,6 @@ spec:
              python3 -m pip install trains-agent{{ .Values.agent.agentVersion}} ;
              {{if .Values.agent.dockerMode}}TRAINS_DOCKER_SKIP_GPUS_FLAG=1 TRAINS_AGENT_K8S_HOST_MOUNT=/root/.trains:/root/.trains trains-agent daemon --docker {{ .Values.agent.defaultBaseDocker}} --force-current-version --queue {{ .Values.agent.queues}}"
              {{ else}}TRAINS_AGENT_K8S_HOST_MOUNT=/root/.trains:/root/.trains trains-agent daemon --queue {{ .Values.agent.queues}}"{{ end}}
-        {{ if .Values.agent.trainsConfig }}
-        volumeMounts:
-          - name: agent-trains-conf-volume
-            mountPath: /root/trains.conf
-            subPath: trains.conf
-        {{ end }}
       volumes:
       {{if .Values.agent.dockerMode}}
       - name: dockersock
@@ -112,6 +110,9 @@ spec:
       {{ if .Values.agent.trainsConfig }}
       - name: agent-trains-conf-volume
         secret:
-          secretName: agent-trains-conf
+          secretName: trains-agent-conf
+          items:
+          - key: trains.conf
+            path: trains.conf
       {{ end }}
       restartPolicy: Always
