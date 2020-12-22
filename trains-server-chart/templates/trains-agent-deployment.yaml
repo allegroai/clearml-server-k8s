@@ -61,7 +61,9 @@ spec:
             mountPath: /root/.trains
           {{ if .Values.agent.trainsConfig }}
           - name: agent-trains-conf-volume
-            mountPath: "/root"
+            mountPath: "/root/trains.conf"
+            subPath: trains.conf
+            readOnly: true
           {{ end}}
         env:
           - name: TRAINS_API_HOST
