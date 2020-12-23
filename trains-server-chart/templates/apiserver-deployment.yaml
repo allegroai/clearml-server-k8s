@@ -74,17 +74,17 @@ spec:
         {{- end }}
         env:
         - name: TRAINS_ELASTIC_SERVICE_HOST
-          value: {{ .Values.apiserver.elasticServiceName }}
+          value: "elasticsearch-master"
         - name: TRAINS_ELASTIC_SERVICE_PORT
-          value: "{{ .Values.apiserver.elasticServicePort }}"
+          value: "{{ .Values.elasticsearch.httpPort }}"
         - name: TRAINS_MONGODB_SERVICE_HOST
-          value: {{ .Values.apiserver.mongoServiceName }}
+          value: "{{ .Release.Name }}-mongodb"
         - name: TRAINS_MONGODB_SERVICE_PORT
-          value: "{{ .Values.apiserver.mongoServicePort }}"
+          value: "{{ .Values.mongodb.service.port }}"
         - name: TRAINS_REDIS_SERVICE_HOST
-          value: {{ .Values.apiserver.redisServiceName }}
+          value: "{{ .Release.Name }}-redis-master"
         - name: TRAINS_REDIS_SERVICE_PORT
-          value: "{{ .Values.apiserver.redisServicePort }}"
+          value: "{{ .Values.redis.master.port }}"
         - name: TRAINS__apiserver__pre_populate__enabled
           value: "{{ .Values.apiserver.prepopulateEnabled }}"
         - name: TRAINS__apiserver__pre_populate__zip_files
