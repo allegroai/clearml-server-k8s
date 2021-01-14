@@ -1,20 +1,17 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Values.services.elasticsearch.name}}
   labels:
     app.kubernetes.io/name: elasticsearch
-    app.kubernetes.io/instance: {{ .Release.Name }}
-    app.kubernetes.io/part-of: trains-server
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
-    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
-  namespace: {{ .Values.trains.namespace }}
+    app.kubernetes.io/instance: clearml-server
+    app.kubernetes.io/part-of: clearml-server
+  name: elasticsearch-service
+  namespace: clearml
 spec:
   selector:
     app.kubernetes.io/name: elasticsearch
-    app.kubernetes.io/instance: {{ .Release.Name }}
-    app.kubernetes.io/part-of: trains-server
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/instance: clearml-server
+    app.kubernetes.io/part-of: clearml-server
   type: ClusterIP
   ports:
   - protocol: TCP
@@ -26,19 +23,16 @@ kind: Deployment
 metadata:
   labels:
     app.kubernetes.io/name: elasticsearch
-    app.kubernetes.io/instance: {{ .Release.Name }}
-    app.kubernetes.io/part-of: trains-server
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
-    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    app.kubernetes.io/instance: clearml-server
+    app.kubernetes.io/part-of: clearml-server
   name: elasticsearch
-  namespace: {{ .Values.trains.namespace }}
+  namespace: clearml
 spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: elasticsearch
-      app.kubernetes.io/instance: {{ .Release.Name }}
-      app.kubernetes.io/part-of: trains-server
-      app.kubernetes.io/managed-by: {{ .Release.Service }}
+      app.kubernetes.io/instance: clearml-server
+      app.kubernetes.io/part-of: clearml-server
   minReadySeconds: 50
   progressDeadlineSeconds: 60
   strategy:
@@ -47,10 +41,8 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/name: elasticsearch
-        app.kubernetes.io/instance: {{ .Release.Name }}
-        app.kubernetes.io/part-of: trains-server
-        app.kubernetes.io/managed-by: {{ .Release.Service }}
-        helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+        app.kubernetes.io/instance: clearml-server
+        app.kubernetes.io/part-of: clearml-server
     spec:
       affinity:
         nodeAffinity:
@@ -60,7 +52,7 @@ spec:
               - key: app
                 operator: In
                 values:
-                - trains
+                - clearml
       initContainers:
       - name: set-dir-owner
         image: centos:7
@@ -73,9 +65,15 @@ spec:
         - name: bootstrap.memory_lock
           value: "true"
         - name: cluster.name
-          value: trains
+          value: clearml
         - name: cluster.routing.allocation.node_initial_primaries_recoveries
           value: "500"
+        - name: cluster.routing.allocation.disk.watermark.low
+          value: 500mb
+        - name: cluster.routing.allocation.disk.watermark.high
+          value: 500mb
+        - name: cluster.routing.allocation.disk.watermark.flood_stage
+          value: 500mb
         - name: discovery.zen.minimum_master_nodes
           value: "1"
         - name: discovery.type
@@ -85,7 +83,7 @@ spec:
         - name: node.ingest
           value: "true"
         - name: node.name
-          value: trains
+          value: clearml
         - name: reindex.remote.whitelist
           value: '*.*'
         - name: xpack.monitoring.enabled
@@ -93,13 +91,14 @@ spec:
         - name: xpack.security.enabled
           value: "false"
         - name: ES_JAVA_OPTS
-          value: {{ .Values.elasticsearch.esJavaOpts }}
+          value: "-Xms2g -Xmx2g"
         resources:
           requests:
-            memory: {{ .Values.elasticsearch.esMemoryRequest }}
+            memory: "2.3G"
             cpu: "600m"
           limits:
-            memory: {{ .Values.elasticsearch.esMemoryLimit }}
+            memory: "2.6G"
+            cpu: "1"
         image: docker.elastic.co/elasticsearch/elasticsearch:7.6.2
         name: elasticsearch
         ports:
@@ -109,8 +108,8 @@ spec:
           name: elasticsearch-hostpath
       restartPolicy: Always
       nodeSelector:
-        {{ .Values.trains.nodeSelector }}
+        app: clearml
       volumes:
       - name: elasticsearch-hostpath
-        persistentVolumeClaim:
-          claimName: elasticsearch-pv-claim
+        hostPath:
+          path: /opt/clearml/data/elastic_7

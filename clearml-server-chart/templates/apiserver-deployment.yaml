@@ -5,16 +5,16 @@ metadata:
   labels:
     app.kubernetes.io/name: apiserver
     app.kubernetes.io/instance: {{ .Release.Name }}
-    app.kubernetes.io/part-of: trains-server
+    app.kubernetes.io/part-of: clearml-server
     app.kubernetes.io/managed-by: {{ .Release.Service }}
-    app.kubernetes.io/version: {{ .Values.trains.image.tag }}
+    app.kubernetes.io/version: {{ .Values.clearml.image.tag }}
     helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
-  namespace: {{ .Values.trains.namespace }}
+  namespace: {{ .Values.clearml.namespace }}
 spec:
   selector:
     app.kubernetes.io/name: apiserver
     app.kubernetes.io/instance: {{ .Release.Name }}
-    app.kubernetes.io/part-of: trains-server
+    app.kubernetes.io/part-of: clearml-server
     app.kubernetes.io/managed-by: {{ .Release.Service }}
   type: NodePort
   ports:
@@ -29,18 +29,18 @@ metadata:
   labels:
     app.kubernetes.io/name: apiserver
     app.kubernetes.io/instance: {{ .Release.Name }}
-    app.kubernetes.io/part-of: trains-server
+    app.kubernetes.io/part-of: clearml-server
     app.kubernetes.io/managed-by: {{ .Release.Service }}
-    app.kubernetes.io/version: {{ .Values.trains.image.tag }}
+    app.kubernetes.io/version: {{ .Values.clearml.image.tag }}
     helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
   name: apiserver
-  namespace: {{ .Values.trains.namespace }}
+  namespace: {{ .Values.clearml.namespace }}
 spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: apiserver
       app.kubernetes.io/instance: {{ .Release.Name }}
-      app.kubernetes.io/part-of: trains-server
+      app.kubernetes.io/part-of: clearml-server
       app.kubernetes.io/managed-by: {{ .Release.Service }}
   minReadySeconds: 20
   progressDeadlineSeconds: 30
@@ -51,9 +51,9 @@ spec:
       labels:
         app.kubernetes.io/name: apiserver
         app.kubernetes.io/instance: {{ .Release.Name }}
-        app.kubernetes.io/part-of: trains-server
+        app.kubernetes.io/part-of: clearml-server
         app.kubernetes.io/managed-by: {{ .Release.Service }}
-        app.kubernetes.io/version: {{ .Values.trains.image.tag }}
+        app.kubernetes.io/version: {{ .Values.clearml.image.tag }}
         helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
     spec:
       affinity:
@@ -64,9 +64,9 @@ spec:
                   - key: app
                     operator: In
                     values:
-                    - trains
+                    - clearml
       containers:
-      - image: {{ .Values.trains.image.repository }}:{{ .Values.trains.image.tag }}
+      - image: {{ .Values.clearml.image.repository }}:{{ .Values.clearml.image.tag }}
         name: apiserver
         resources:
         {{- with .Values.apiserver.resources }}
@@ -95,16 +95,16 @@ spec:
           value: {{ .Values.apiserver.deploymentType }}
         {{- if .Values.use_secrets_flexvolume }}
         - name: TRAINS_CONFIG_DIR
-          value: /opt/trains/config:/opt/trains/secrets
+          value: /opt/clearml/config:/opt/clearml/secrets
         {{- else }}
         - name: TRAINS_CONFIG_DIR
-          value: /opt/trains/config
+          value: /opt/clearml/config
         {{- end }}
         args:
         - apiserver
         volumeMounts:
         {{- if .Values.use_secrets_flexvolume }}
-            - mountPath: /opt/trains/secrets
+            - mountPath: /opt/clearml/secrets
               name: apiserver-azurekeyvault
         {{- end }}
         {{- with .Values.apiserver.volumeMounts }}
@@ -112,7 +112,7 @@ spec:
         {{- end }}
       restartPolicy: Always
       nodeSelector:
-        {{ .Values.trains.nodeSelector}}
+        {{ .Values.clearml.nodeSelector}}
       volumes:
       {{- if .Values.use_secrets_flexvolume }}
         - name: apiserver-azurekeyvault

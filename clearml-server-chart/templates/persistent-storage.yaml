@@ -16,7 +16,7 @@ spec:
     path: "{{ .Values.storage.nfs.base_path }}/data/elastic"
   {{ else }}
   hostPath:
-    path: "/opt/trains/data/elastic_7"
+    path: "/opt/clearml/data/elastic_7"
   {{- end }}
 ---
 apiVersion: v1
@@ -49,7 +49,7 @@ spec:
     path: "{{ .Values.storage.nfs.base_path }}/data/mongo/db"
   {{ else }}
   hostPath:
-    path: "/opt/trains/data/mongo/db"
+    path: "/opt/clearml/data/mongo/db"
   {{- end }}
 ---
 apiVersion: v1
@@ -82,7 +82,7 @@ spec:
     path: "{{ .Values.storage.nfs.base_path }}/data/mongo/configdb"
   {{ else }}
   hostPath:
-    path: "/opt/trains/data/mongo/configdb"
+    path: "/opt/clearml/data/mongo/configdb"
   {{- end }}
 ---
 apiVersion: v1
@@ -115,7 +115,7 @@ spec:
     path: "{{ .Values.storage.nfs.base_path }}/data/redis"
   {{ else }}
   hostPath:
-    path: "/opt/trains/data/redis"
+    path: "/opt/clearml/data/redis"
   {{- end }}
 ---
 apiVersion: v1
@@ -148,7 +148,7 @@ spec:
     path: "{{ .Values.storage.nfs.base_path }}/logs"
   {{ else }}
   hostPath:
-    path: "/opt/trains/logs"
+    path: "/opt/clearml/logs"
   {{- end }}
 ---
 apiVersion: v1
@@ -181,7 +181,7 @@ spec:
     path: "{{ .Values.storage.nfs.base_path }}/data/fileserver"
   {{ else }}
   hostPath:
-    path: "/opt/trains/data/fileserver"
+    path: "/opt/clearml/data/fileserver"
   {{- end }}
 ---
 apiVersion: v1
@@ -214,7 +214,7 @@ spec:
     path: "{{ .Values.storage.nfs.base_path }}/logs"
   {{ else }}
   hostPath:
-    path: "/opt/trains/logs"
+    path: "/opt/clearml/logs"
   {{- end }}
 ---
 apiVersion: v1
@@ -247,7 +247,7 @@ spec:
     path: "{{ .Values.storage.nfs.base_path }}/config"
   {{ else }}
   hostPath:
-    path: "/opt/trains/config"
+    path: "/opt/clearml/config"
   {{- end }}
 ---
 apiVersion: v1

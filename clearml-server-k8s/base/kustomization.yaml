@@ -8,6 +8,6 @@ resources:
   - fileserver-deployment.yaml
   - mongo-deployment.yaml
   - redis-deployment.yaml
-  - trains-namespace.yaml
+  - clearml-namespace.yaml
   - webserver-deployment.yaml
   - agentservices-deployment.yaml

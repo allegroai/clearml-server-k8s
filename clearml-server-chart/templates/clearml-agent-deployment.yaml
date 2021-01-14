@@ -1,0 +1,120 @@
+{{ if .Values.agent.clearmlConfig }}
+apiVersion: v1
+kind: Secret
+metadata:
+  name: clearml-agent-conf
+data:
+  clearml.conf: {{ .Values.agent.clearmlConfig | b64enc }}
+---
+{{ end }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/name: clearml-agent
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/part-of: clearml-server
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    allegro.ai/node-type: clearml-agent
+  name: clearml-agent
+  namespace: {{ .Values.clearml.namespace }}
+spec:
+  replicas: {{ .Values.agent.numberOfClearmlAgents }}
+  selector:
+    matchLabels:
+          app.kubernetes.io/name: clearml-agent
+          app.kubernetes.io/instance: {{ .Release.Name }}
+          app.kubernetes.io/part-of: clearml-server
+          app.kubernetes.io/managed-by: {{ .Release.Service }}
+  minReadySeconds: 20
+  progressDeadlineSeconds: 30
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+          app.kubernetes.io/name: clearml-agent
+          app.kubernetes.io/instance: {{ .Release.Name }}
+          app.kubernetes.io/part-of: clearml-server
+          app.kubernetes.io/managed-by: {{ .Release.Service }}
+          helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+          allegro.ai/node-type: clearml-agent
+      annotations:
+        checksum/config: {{ toYaml .Values.agent.clearmlConfig | b64enc | sha256sum }}
+    spec:
+      containers:
+      - image: nvidia/cuda
+        name: clearml-agent
+        securityContext:
+          privileged: true
+        resources:
+          limits:
+            nvidia.com/gpu:
+              {{ .Values.agent.nvidiaGpusPerAgent }}
+        volumeMounts:
+          {{if .Values.agent.dockerMode}}
+          - name: dockersock
+            mountPath: "/var/run/docker.sock"
+          {{ end}}
+          - name: agent-data
+            mountPath: /root/.clearml
+          {{ if .Values.agent.clearmlConfig }}
+          - name: agent-clearml-conf-volume
+            mountPath: "/root/clearml.conf"
+            subPath: clearml.conf
+            readOnly: true
+          {{ end}}
+        env:
+          - name: CLEARML_API_HOST
+            value: {{ .Values.agent.clearmlApiHost}}
+          - name: CLEARML_WEB_HOST
+            value: {{ .Values.agent.clearmlWebHost}}
+          - name: CLEARML_FILES_HOST
+            value: {{ .Values.agent.clearmlFilesHost}}
+          - name: CLEARML_AGENT_GIT_USER
+            value: {{ .Values.agent.clearmlGitUser}}
+          - name: CLEARML_AGENT_GIT_PASS
+            value: {{ .Values.agent.clearmlGitPassword}}
+          - name: CLEARML_API_ACCESS_KEY
+            value: {{ .Values.agent.clearmlAccessKey}}
+          - name: CLEARML_API_SECRET_KEY
+            value: {{ .Values.agent.clearmlSecretKey}}
+          - name: AWS_ACCESS_KEY_ID
+            value: {{ .Values.agent.awsAccessKeyId}}
+          - name: AWS_SECRET_ACCESS_KEY
+            value: {{ .Values.agent.awsSecretAccessKey}}
+          - name: AWS_DEFAULT_REGION
+            value: {{ .Values.agent.awsDefaultRegion}}
+          - name: AZURE_STORAGE_ACCOUNT
+            value: {{ .Values.agent.azureStorageAccount}}
+          - name: AZURE_STORAGE_KEY
+            value: {{ .Values.agent.azureStorageKey}}
+        command:
+          - /bin/sh
+          - -c
+          - "apt-get update ;
+             apt-get install -y curl python3-pip git;
+             curl -sSL https://get.docker.com/ | sh ;
+             python3 -m pip install -U pip ;
+             python3 -m pip install clearml-agent{{ .Values.agent.agentVersion}} ;
+             {{if .Values.agent.dockerMode}}CLEARML_DOCKER_SKIP_GPUS_FLAG=1 CLEARML_AGENT_K8S_HOST_MOUNT=/root/.clearml:/root/.clearml clearml-agent daemon --docker {{ .Values.agent.defaultBaseDocker}} --force-current-version --queue {{ .Values.agent.queues}}"
+             {{ else}}CLEARML_AGENT_K8S_HOST_MOUNT=/root/.clearml:/root/.clearml clearml-agent daemon --queue {{ .Values.agent.queues}}"{{ end}}
+      volumes:
+      {{if .Values.agent.dockerMode}}
+      - name: dockersock
+        hostPath:
+          path: /var/run/docker.sock
+      {{ end}}
+      - name: agent-data
+        hostPath:
+          path: /root/.clearml/
+      {{ if .Values.agent.clearmlConfig }}
+      - name: agent-clearml-conf-volume
+        secret:
+          secretName: clearml-agent-conf
+          items:
+          - key: clearml.conf
+            path: clearml.conf
+      {{ end }}
+      restartPolicy: Always

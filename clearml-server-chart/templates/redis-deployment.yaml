@@ -5,15 +5,15 @@ metadata:
   labels:
     app.kubernetes.io/name: redis
     app.kubernetes.io/instance: {{ .Release.Name }}
-    app.kubernetes.io/part-of: trains-server
+    app.kubernetes.io/part-of: clearml-server
     app.kubernetes.io/managed-by: {{ .Release.Service }}
     helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
-  namespace: {{ .Values.trains.namespace }}
+  namespace: {{ .Values.clearml.namespace }}
 spec:
   selector:
     app.kubernetes.io/name: redis
     app.kubernetes.io/instance: {{ .Release.Name }}
-    app.kubernetes.io/part-of: trains-server
+    app.kubernetes.io/part-of: clearml-server
     app.kubernetes.io/managed-by: {{ .Release.Service }}
   type: ClusterIP
   ports:
@@ -27,17 +27,17 @@ metadata:
   labels:
     app.kubernetes.io/name: redis
     app.kubernetes.io/instance: {{ .Release.Name }}
-    app.kubernetes.io/part-of: trains-server
+    app.kubernetes.io/part-of: clearml-server
     app.kubernetes.io/managed-by: {{ .Release.Service }}
     helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
   name: redis
-  namespace: {{ .Values.trains.namespace }}
+  namespace: {{ .Values.clearml.namespace }}
 spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: redis
       app.kubernetes.io/instance: {{ .Release.Name }}
-      app.kubernetes.io/part-of: trains-server
+      app.kubernetes.io/part-of: clearml-server
       app.kubernetes.io/managed-by: {{ .Release.Service }}
   minReadySeconds: 20
   progressDeadlineSeconds: 30
@@ -48,7 +48,7 @@ spec:
       labels:
         app.kubernetes.io/name: redis
         app.kubernetes.io/instance: {{ .Release.Name }}
-        app.kubernetes.io/part-of: trains-server
+        app.kubernetes.io/part-of: clearml-server
         app.kubernetes.io/managed-by: {{ .Release.Service }}
         helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
     spec:
@@ -60,7 +60,7 @@ spec:
                   - key: app
                     operator: In
                     values:
-                    - trains
+                    - clearml
       containers:
       - image: redis:5.0
         name: redis
@@ -76,7 +76,7 @@ spec:
           name: redis-data
       restartPolicy: Always
       nodeSelector:
-        {{ .Values.trains.nodeSelector}}
+        {{ .Values.clearml.nodeSelector}}
       volumes:
       - name: redis-data
         persistentVolumeClaim:

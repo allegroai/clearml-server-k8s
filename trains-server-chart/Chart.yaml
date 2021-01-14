@@ -1,5 +1,0 @@
-apiVersion: v1
-appVersion: "0.16.1-320"
-description: Allegro.ai trains server Helm chart for Kubernetes
-name: trains-server-chart
-version: 0.16.1+1

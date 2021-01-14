@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-CHART_DIR="trains-server-charts"
+CHART_DIR="clearml-server-charts"
 KUBEVAL_VERSION="0.15.0"
 SCHEMA_LOCATION="https://raw.githubusercontent.com/instrumenta/kubernetes-json-schema/master/"
 

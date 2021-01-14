@@ -4,17 +4,17 @@ metadata:
   labels:
     app.kubernetes.io/name: agentservices
     app.kubernetes.io/instance: {{ .Release.Name }}
-    app.kubernetes.io/part-of: trains-server
+    app.kubernetes.io/part-of: clearml-server
     app.kubernetes.io/managed-by: {{ .Release.Service }}
     helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
   name: agentservices
-  namespace: {{ .Values.trains.namespace }}
+  namespace: {{ .Values.clearml.namespace }}
 spec:
   selector:
     matchLabels:
           app.kubernetes.io/name: agentservices
           app.kubernetes.io/instance: {{ .Release.Name }}
-          app.kubernetes.io/part-of: trains-server
+          app.kubernetes.io/part-of: clearml-server
           app.kubernetes.io/managed-by: {{ .Release.Service }}
   minReadySeconds: 20
   progressDeadlineSeconds: 30
@@ -25,7 +25,7 @@ spec:
       labels:
           app.kubernetes.io/name: agentservices
           app.kubernetes.io/instance: {{ .Release.Name }}
-          app.kubernetes.io/part-of: trains-server
+          app.kubernetes.io/part-of: clearml-server
           app.kubernetes.io/managed-by: {{ .Release.Service }}
           helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
     spec:
@@ -37,9 +37,9 @@ spec:
                   - key: app
                     operator: In
                     values:
-                      - trains
+                      - clearml
       containers:
-      - image: allegroai/trains-agent-services:latest
+      - image: allegroai/clearml-agent-services:latest
         name: agentservices
         securityContext:
           privileged: true
@@ -47,27 +47,27 @@ spec:
           - name: dockersock
             mountPath: "/var/run/docker.sock"
           - name: agent-data
-            mountPath: /root/.trains
+            mountPath: /root/.clearml
         env:
-          - name: TRAINS_HOST_IP
-            value: {{ .Values.agentservices.trainsHostIp }}
-          - name: TRAINS_API_HOST
-            value: {{ .Values.agentservices.trainsApiHost }}
-          - name: TRAINS_WEB_HOST
-            value: {{ .Values.agentservices.trainsWebHost }}
-          - name: TRAINS_FILES_HOST
-            value: {{ .Values.agentservices.trainsFilesHost }}
-          - name: TRAINS_AGENT_GIT_USER
-            value: {{ .Values.agentservices.trainsGitUser }}
-          - name: TRAINS_AGENT_GIT_PASS
-            value: {{ .Values.agentservices.trainsGitPassword }}
-          - name: TRAINS_API_ACCESS_KEY
-            value: {{ .Values.agentservices.trainsAccessKey }}
-          - name: TRAINS_API_SECRET_KEY
-            value: {{ .Values.agentservices.trainsSecretKey }}
-          - name: TRAINS_AGENT_UPDATE_VERSION
+          - name: CLEARML_HOST_IP
+            value: {{ .Values.agentservices.clearmlHostIp }}
+          - name: CLEARML_API_HOST
+            value: {{ .Values.agentservices.clearmlApiHost }}
+          - name: CLEARML_WEB_HOST
+            value: {{ .Values.agentservices.clearmlWebHost }}
+          - name: CLEARML_FILES_HOST
+            value: {{ .Values.agentservices.clearmlFilesHost }}
+          - name: CLEARML_AGENT_GIT_USER
+            value: {{ .Values.agentservices.clearmlGitUser }}
+          - name: CLEARML_AGENT_GIT_PASS
+            value: {{ .Values.agentservices.clearmlGitPassword }}
+          - name: CLEARML_API_ACCESS_KEY
+            value: {{ .Values.agentservices.clearmlAccessKey }}
+          - name: CLEARML_API_SECRET_KEY
+            value: {{ .Values.agentservices.clearmlSecretKey }}
+          - name: CLEARML_AGENT_UPDATE_VERSION
             value: {{ .Values.agentservices.agentVersion }}
-          - name: TRAINS_AGENT_DEFAULT_BASE_DOCKER
+          - name: CLEARML_AGENT_DEFAULT_BASE_DOCKER
             value: {{ .Values.agentservices.defaultBaseDocker }}
           - name: AWS_ACCESS_KEY_ID
             value: {{ .Values.agentservices.awsAccessKeyId }}
@@ -81,17 +81,17 @@ spec:
             value: {{ .Values.agentservices.azureStorageKey }}
           - name: GOOGLE_APPLICATION_CREDENTIALS
             value: {{ .Values.agentservices.googleCredentials }}
-          - name: TRAINS_WORKER_ID
-            value: {{ .Values.agentservices.trainsWorkerId }}
-          - name: TRAINS_AGENT_DOCKER_HOST_MOUNT
-            value: {{ .Values.agentservices.trainsDockerHostMount }}
+          - name: CLEARML_WORKER_ID
+            value: {{ .Values.agentservices.clearmlWorkerId }}
+          - name: CLEARML_AGENT_DOCKER_HOST_MOUNT
+            value: {{ .Values.agentservices.clearmlDockerHostMount }}
       volumes:
       - name: dockersock
         hostPath:
           path: /var/run/docker.sock
       - name: agent-data
         hostPath:
-          path: /opt/trains/agent
+          path: /opt/clearml/agent
       restartPolicy: Always
       nodeSelector:
-        {{ .Values.trains.nodeSelector }}
+        {{ .Values.clearml.nodeSelector }}

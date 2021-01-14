@@ -5,5 +5,5 @@ commonAnnotations:
 bases:
   - ../../base
 images:
-  - name: allegroai/trains-server
-    newTag: "0.16"
+  - name: allegroai/clearml
+    newTag: "0.17"

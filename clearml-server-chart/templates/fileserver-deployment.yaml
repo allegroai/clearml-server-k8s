@@ -5,16 +5,16 @@ metadata:
   labels:
     app.kubernetes.io/name: fileserver
     app.kubernetes.io/instance: {{ .Release.Name }}
-    app.kubernetes.io/part-of: trains-server
+    app.kubernetes.io/part-of: clearml-server
     app.kubernetes.io/managed-by: {{ .Release.Service }}
-    app.kubernetes.io/version: {{ .Values.trains.image.tag }}
+    app.kubernetes.io/version: {{ .Values.clearml.image.tag }}
     helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
-  namespace: {{ .Values.trains.namespace }}
+  namespace: {{ .Values.clearml.namespace }}
 spec:
   selector:
     app.kubernetes.io/name: fileserver
     app.kubernetes.io/instance: {{ .Release.Name }}
-    app.kubernetes.io/part-of: trains-server
+    app.kubernetes.io/part-of: clearml-server
     app.kubernetes.io/managed-by: {{ .Release.Service }}
   type: NodePort
   ports:
@@ -29,18 +29,18 @@ metadata:
   labels:
     app.kubernetes.io/name: fileserver
     app.kubernetes.io/instance: {{ .Release.Name }}
-    app.kubernetes.io/part-of: trains-server
+    app.kubernetes.io/part-of: clearml-server
     app.kubernetes.io/managed-by: {{ .Release.Service }}
-    app.kubernetes.io/version: {{ .Values.trains.image.tag }}
+    app.kubernetes.io/version: {{ .Values.clearml.image.tag }}
     helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
   name: fileserver
-  namespace: {{ .Values.trains.namespace }}
+  namespace: {{ .Values.clearml.namespace }}
 spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: fileserver
       app.kubernetes.io/instance: {{ .Release.Name }}
-      app.kubernetes.io/part-of: trains-server
+      app.kubernetes.io/part-of: clearml-server
       app.kubernetes.io/managed-by: {{ .Release.Service }}
   progressDeadlineSeconds: 5
   strategy:
@@ -50,9 +50,9 @@ spec:
       labels:
         app.kubernetes.io/name: fileserver
         app.kubernetes.io/instance: {{ .Release.Name }}
-        app.kubernetes.io/part-of: trains-server
+        app.kubernetes.io/part-of: clearml-server
         app.kubernetes.io/managed-by: {{ .Release.Service }}
-        app.kubernetes.io/version: {{ .Values.trains.image.tag }}
+        app.kubernetes.io/version: {{ .Values.clearml.image.tag }}
         helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
     spec:
       affinity:
@@ -63,9 +63,9 @@ spec:
                   - key: app
                     operator: In
                     values:
-                    - trains
+                    - clearml
       containers:
-      - image: {{ .Values.trains.image.repository }}:{{ .Values.trains.image.tag }}
+      - image: {{ .Values.clearml.image.repository }}:{{ .Values.clearml.image.tag }}
         name: fileserver
         resources:
           requests:
@@ -77,13 +77,13 @@ spec:
         args:
         - fileserver
         volumeMounts:
-        - mountPath: /var/log/trains
+        - mountPath: /var/log/clearml
           name: fileserver-hostpath0
         - mountPath: /mnt/fileserver
           name: fileserver-hostpath1
       restartPolicy: Always
       nodeSelector:
-        {{ .Values.trains.nodeSelector}}
+        {{ .Values.clearml.nodeSelector}}
       volumes:
       - name: fileserver-hostpath0
         persistentVolumeClaim:

@@ -3,15 +3,15 @@ kind: Service
 metadata:
   labels:
     app.kubernetes.io/name: fileserver
-    app.kubernetes.io/instance: trains-server
-    app.kubernetes.io/part-of: trains-server
+    app.kubernetes.io/instance: clearml-server
+    app.kubernetes.io/part-of: clearml-server
   name: fileserver-service
-  namespace: trains
+  namespace: clearml
 spec:
   selector:
     app.kubernetes.io/name: fileserver
-    app.kubernetes.io/instance: trains-server
-    app.kubernetes.io/part-of: trains-server
+    app.kubernetes.io/instance: clearml-server
+    app.kubernetes.io/part-of: clearml-server
   type: NodePort
   ports:
   - protocol: TCP
@@ -24,16 +24,16 @@ kind: Deployment
 metadata:
   labels:
     app.kubernetes.io/name: fileserver
-    app.kubernetes.io/instance: trains-server
-    app.kubernetes.io/part-of: trains-server
+    app.kubernetes.io/instance: clearml-server
+    app.kubernetes.io/part-of: clearml-server
   name: fileserver
-  namespace: trains
+  namespace: clearml
 spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: fileserver
-      app.kubernetes.io/instance: trains-server
-      app.kubernetes.io/part-of: trains-server
+      app.kubernetes.io/instance: clearml-server
+      app.kubernetes.io/part-of: clearml-server
   progressDeadlineSeconds: 5
   strategy:
     type: Recreate
@@ -41,8 +41,8 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/name: fileserver
-        app.kubernetes.io/instance: trains-server
-        app.kubernetes.io/part-of: trains-server
+        app.kubernetes.io/instance: clearml-server
+        app.kubernetes.io/part-of: clearml-server
     spec:
       affinity:
         nodeAffinity:
@@ -52,9 +52,9 @@ spec:
                   - key: app
                     operator: In
                     values:
-                    - trains
+                    - clearml
       containers:
-      - image: allegroai/trains-server:latest
+      - image: allegroai/clearml:latest
         imagePullPolicy: Always
         name: fileserver
         resources:
@@ -67,17 +67,17 @@ spec:
         args:
         - fileserver
         volumeMounts:
-        - mountPath: /var/log/trains
+        - mountPath: /var/log/clearml
           name: fileserver-hostpath0
         - mountPath: /mnt/fileserver
           name: fileserver-hostpath1
       restartPolicy: Always
       nodeSelector:
-        app: trains
+        app: clearml
       volumes:
       - name: fileserver-hostpath0
         hostPath:
-          path: /opt/trains/logs
+          path: /opt/clearml/logs
       - name: fileserver-hostpath1
         hostPath:
-          path: /opt/trains/data/fileserver
+          path: /opt/clearml/data/fileserver

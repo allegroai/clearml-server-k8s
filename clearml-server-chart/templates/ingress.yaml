@@ -6,9 +6,9 @@ metadata:
     labels:
         app.kubernetes.io/name: {{ .Values.ingress.name }}
         app.kubernetes.io/instance: {{ .Release.Name }}
-        app.kubernetes.io/part-of: trains-server
+        app.kubernetes.io/part-of: clearml-server
         app.kubernetes.io/managed-by: {{ .Release.Service }}
-        app.kubernetes.io/version: {{ .Values.trains.image.tag }}
+        app.kubernetes.io/version: {{ .Values.clearml.image.tag }}
         helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
     {{- with .Values.ingress.annotations }}
     annotations:

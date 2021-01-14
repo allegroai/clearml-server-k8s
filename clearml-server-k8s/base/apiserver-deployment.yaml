@@ -3,15 +3,15 @@ kind: Service
 metadata:
   labels:
     app.kubernetes.io/name: apiserver
-    app.kubernetes.io/instance: trains-server
-    app.kubernetes.io/part-of: trains-server
+    app.kubernetes.io/instance: clearml-server
+    app.kubernetes.io/part-of: clearml-server
   name: apiserver-service
-  namespace: trains
+  namespace: clearml
 spec:
   selector:
     app.kubernetes.io/name: apiserver
-    app.kubernetes.io/instance: trains-server
-    app.kubernetes.io/part-of: trains-server
+    app.kubernetes.io/instance: clearml-server
+    app.kubernetes.io/part-of: clearml-server
   type: NodePort
   ports:
   - protocol: TCP
@@ -24,18 +24,18 @@ kind: Deployment
 metadata:
   labels:
     app.kubernetes.io/name: apiserver
-    app.kubernetes.io/instance: trains-server
-    app.kubernetes.io/part-of: trains-server
+    app.kubernetes.io/instance: clearml-server
+    app.kubernetes.io/part-of: clearml-server
   name: apiserver
-  namespace: trains
+  namespace: clearml
 spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: apiserver
-      app.kubernetes.io/instance: trains-server
-      app.kubernetes.io/part-of: trains-server
-      trains: apiserver
-      platform: trains
+      app.kubernetes.io/instance: clearml-server
+      app.kubernetes.io/part-of: clearml-server
+      clearml: apiserver
+      platform: clearml
   minReadySeconds: 20
   progressDeadlineSeconds: 30
   strategy:
@@ -44,10 +44,10 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/name: apiserver
-        app.kubernetes.io/instance: trains-server
-        app.kubernetes.io/part-of: trains-server
-        trains: apiserver
-        platform: trains
+        app.kubernetes.io/instance: clearml-server
+        app.kubernetes.io/part-of: clearml-server
+        clearml: apiserver
+        platform: clearml
     spec:
       affinity:
         nodeAffinity:
@@ -57,9 +57,9 @@ spec:
                   - key: app
                     operator: In
                     values:
-                    - trains
+                    - clearml
       containers:
-      - image: allegroai/trains-server:latest
+      - image: allegroai/clearml:latest
         imagePullPolicy: Always
         name: apiserver
         resources:
@@ -93,17 +93,17 @@ spec:
         args:
         - apiserver
         volumeMounts:
-        - mountPath: /var/log/trains
+        - mountPath: /var/log/clearml
           name: apiserver-hostpath0
-        - mountPath: /opt/trains/config
+        - mountPath: /opt/clearml/config
           name: apiserver-hostpath1
       restartPolicy: Always
       nodeSelector:
-        app: trains
+        app: clearml
       volumes:
       - name: apiserver-hostpath0
         hostPath:
-          path: /opt/trains/logs
+          path: /opt/clearml/logs
       - name: apiserver-hostpath1
         hostPath:
-          path: /opt/trains/config
+          path: /opt/clearml/config

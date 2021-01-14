@@ -3,16 +3,16 @@ kind: Deployment
 metadata:
   labels:
     app.kubernetes.io/name: agentservices
-    app.kubernetes.io/instance: trains-server
-    app.kubernetes.io/part-of: trains-server
+    app.kubernetes.io/instance: clearml-server
+    app.kubernetes.io/part-of: clearml-server
   name: agent-services
-  namespace: trains
+  namespace: clearml
 spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: agentservices
-      app.kubernetes.io/instance: trains-server
-      app.kubernetes.io/part-of: trains-server
+      app.kubernetes.io/instance: clearml-server
+      app.kubernetes.io/part-of: clearml-server
   minReadySeconds: 20
   progressDeadlineSeconds: 30
   strategy:
@@ -21,8 +21,8 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/name: agentservices
-        app.kubernetes.io/instance: trains-server
-        app.kubernetes.io/part-of: trains-server
+        app.kubernetes.io/instance: clearml-server
+        app.kubernetes.io/part-of: clearml-server
     spec:
       affinity:
         nodeAffinity:
@@ -32,36 +32,36 @@ spec:
                   - key: app
                     operator: In
                     values:
-                    - trains
+                    - clearml
       containers:
-      - image: allegroai/trains-agent-services:latest
+      - image: allegroai/clearml-agent-services:latest
         imagePullPolicy: Always
         name: agentservices
         env:
-        - name: TRAINS_API_HOST
+        - name: CLEARML_API_HOST
           value: "http://apiserver-service:8008"
-        - name: TRAINS_AGENT_DEFAULT_BASE_DOCKER
+        - name: CLEARML_AGENT_DEFAULT_BASE_DOCKER
           value: "ubuntu:18.04"
-        - name: TRAINS_WORKER_ID
-          value: "trains-services"
-        - name: TRAINS_AGENT_DOCKER_HOST_MOUNT
-          value: "/opt/trains/agent:/root/.trains"
-        #  Fill in the following in order set the values for trains-agent:
-        # - name: TRAINS_HOST_IP
+        - name: CLEARML_WORKER_ID
+          value: "clearml-services"
+        - name: CLEARML_AGENT_DOCKER_HOST_MOUNT
+          value: "/opt/clearml/agent:/root/.clearml"
+        #  Fill in the following in order set the values for clearml-agent:
+        # - name: CLEARML_HOST_IP
         #   value: ""
-        # - name: TRAINS_WEB_HOST
+        # - name: CLEARML_WEB_HOST
         #   value: ""
-        # - name: TRAINS_FILES_HOST
+        # - name: CLEARML_FILES_HOST
         #   value: ""
-        # - name: TRAINS_API_ACCESS_KEY
+        # - name: CLEARML_API_ACCESS_KEY
         #   value: ""
-        # - name: TRAINS_API_SECRET_KEY
+        # - name: CLEARML_API_SECRET_KEY
         #   value: ""
-        # - name: TRAINS_AGENT_GIT_USER
+        # - name: CLEARML_AGENT_GIT_USER
         #   value: ""
-        # - name: TRAINS_AGENT_GIT_PASS
+        # - name: CLEARML_AGENT_GIT_PASS
         #   value: ""
-        # - name: TRAINS_AGENT_UPDATE_VERSION
+        # - name: CLEARML_AGENT_UPDATE_VERSION
         #   value: ""
         # - name: AWS_ACCESS_KEY_ID
         #   value: ""
@@ -80,15 +80,15 @@ spec:
         volumeMounts:
         - mountPath: /var/run/docker.sock
           name: dockersock
-        - mountPath: /root/.trains
+        - mountPath: /root/.clearml
           name: agent-data
       restartPolicy: Always
       nodeSelector:
-        app: trains
+        app: clearml
       volumes:
       - name: dockersock
         hostPath:
           path: /var/run/docker.sock
       - name: agent-data
         hostPath:
-          path: /opt/trains/agent
+          path: /opt/clearml/agent

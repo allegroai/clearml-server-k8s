@@ -1,20 +1,17 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Values.services.mongo.name}}
   labels:
     app.kubernetes.io/name: mongo
-    app.kubernetes.io/instance: {{ .Release.Name }}
-    app.kubernetes.io/part-of: trains-server
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
-    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
-  namespace: {{ .Values.trains.namespace }}
+    app.kubernetes.io/instance: clearml-server
+    app.kubernetes.io/part-of: clearml-server
+  name: mongo-service
+  namespace: clearml
 spec:
   selector:
     app.kubernetes.io/name: mongo
-    app.kubernetes.io/instance: {{ .Release.Name }}
-    app.kubernetes.io/part-of: trains-server
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/instance: clearml-server
+    app.kubernetes.io/part-of: clearml-server
   type: ClusterIP
   ports:
   - protocol: TCP
@@ -26,19 +23,16 @@ kind: Deployment
 metadata:
   labels:
     app.kubernetes.io/name: mongo
-    app.kubernetes.io/instance: {{ .Release.Name }}
-    app.kubernetes.io/part-of: trains-server
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
-    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    app.kubernetes.io/instance: clearml-server
+    app.kubernetes.io/part-of: clearml-server
   name: mongo
-  namespace: {{ .Values.trains.namespace }}
+  namespace: clearml
 spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: mongo
-      app.kubernetes.io/instance: {{ .Release.Name }}
-      app.kubernetes.io/part-of: trains-server
-      app.kubernetes.io/managed-by: {{ .Release.Service }}
+      app.kubernetes.io/instance: clearml-server
+      app.kubernetes.io/part-of: clearml-server
   minReadySeconds: 20
   progressDeadlineSeconds: 30
   strategy:
@@ -47,10 +41,8 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/name: mongo
-        app.kubernetes.io/instance: {{ .Release.Name }}
-        app.kubernetes.io/part-of: trains-server
-        app.kubernetes.io/managed-by: {{ .Release.Service }}
-        helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+        app.kubernetes.io/instance: clearml-server
+        app.kubernetes.io/part-of: clearml-server
     spec:
       affinity:
         nodeAffinity:
@@ -60,7 +52,7 @@ spec:
                   - key: app
                     operator: In
                     values:
-                    - trains
+                    - clearml
       containers:
       - image: mongo:3.6.5
         name: mongo
@@ -79,11 +71,11 @@ spec:
           name: mongo-hostpath1
       restartPolicy: Always
       nodeSelector:
-        {{ .Values.trains.nodeSelector}}
+        app: clearml
       volumes:
       - name: mongo-hostpath0
-        persistentVolumeClaim:
-          claimName: mongo-pv-claim0
+        hostPath:
+          path: /opt/clearml/data/mongo/db
       - name: mongo-hostpath1
-        persistentVolumeClaim:
-          claimName: mongo-pv-claim1
+        hostPath:
+          path: /opt/clearml/data/mongo/configdb

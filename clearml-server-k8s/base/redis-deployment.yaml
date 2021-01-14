@@ -3,15 +3,15 @@ kind: Service
 metadata:
   labels:
     app.kubernetes.io/name: redis
-    app.kubernetes.io/instance: trains-server
-    app.kubernetes.io/part-of: trains-server
+    app.kubernetes.io/instance: clearml-server
+    app.kubernetes.io/part-of: clearml-server
   name: redis
-  namespace: trains
+  namespace: clearml
 spec:
   selector:
     app.kubernetes.io/name: redis
-    app.kubernetes.io/instance: trains-server
-    app.kubernetes.io/part-of: trains-server
+    app.kubernetes.io/instance: clearml-server
+    app.kubernetes.io/part-of: clearml-server
   type: ClusterIP
   ports:
   - protocol: TCP
@@ -23,16 +23,16 @@ kind: Deployment
 metadata:
   labels:
     app.kubernetes.io/name: redis
-    app.kubernetes.io/instance: trains-server
-    app.kubernetes.io/part-of: trains-server
+    app.kubernetes.io/instance: clearml-server
+    app.kubernetes.io/part-of: clearml-server
   name: redis
-  namespace: trains
+  namespace: clearml
 spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: redis
-      app.kubernetes.io/instance: trains-server
-      app.kubernetes.io/part-of: trains-server
+      app.kubernetes.io/instance: clearml-server
+      app.kubernetes.io/part-of: clearml-server
   minReadySeconds: 20
   progressDeadlineSeconds: 30
   strategy:
@@ -41,8 +41,8 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/name: redis
-        app.kubernetes.io/instance: trains-server
-        app.kubernetes.io/part-of: trains-server
+        app.kubernetes.io/instance: clearml-server
+        app.kubernetes.io/part-of: clearml-server
     spec:
       affinity:
         nodeAffinity:
@@ -52,7 +52,7 @@ spec:
                   - key: app
                     operator: In
                     values:
-                    - trains
+                    - clearml
       containers:
       - image: redis:5.0
         name: redis
@@ -68,8 +68,8 @@ spec:
           name: redis-data
       restartPolicy: Always
       nodeSelector:
-        app: trains
+        app: clearml
       volumes:
       - name: redis-data
         hostPath:
-          path: /opt/trains/data/redis
+          path: /opt/clearml/data/redis

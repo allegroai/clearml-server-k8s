@@ -1,12 +1,12 @@
 agent:
-  numberOfTrainsAgents: 4
+  numberOfClearmlAgents: 4
   nvidiaGpusPerAgent: 1
   defaultBaseDocker: "nvidia/cuda"
-  trainsApiHost: "https://api.trains.mydomain.com"
-  trainsWebHost: "https://app.trains.mydomain.com"
-  trainsFilesHost: "https://files.trains.mydomain.com"
-  trainsGitUser: null
-  trainsGitPassword: null
+  clearmlApiHost: "https://api.clearml.mydomain.com"
+  clearmlWebHost: "https://app.clearml.mydomain.com"
+  clearmlFilesHost: "https://files.clearml.mydomain.com"
+  clearmlGitUser: null
+  clearmlPassword: null
   awsAccessKeyId: null
   awsSecretAccessKey: null
   awsDefaultRegion: null
