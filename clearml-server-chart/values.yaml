@@ -5,12 +5,6 @@ clearml:
     repository: allegroai/clearml
     tag: 0.17.0-63
 apiserver:
-  elasticServiceName: elasticsearch-service
-  elasticServicePort: "9200"
-  mongoServiceName: mongo-service
-  mongoServicePort: "27017"
-  redisServiceName: redis
-  redisServicePort: "6379"
   prepopulateEnabled: "true"
   prepopulateZipFiles: "/opt/trains/db-pre-populate"
   prepopulateArtifactsPath: "/mnt/fileserver"
@@ -35,10 +29,6 @@ apiserver:
     limits:
         memory: "150M"
         cpu: "400m"
-elasticsearch:
-  esJavaOpts: "-Xms2g -Xmx2g"
-  esMemoryRequest: "4G"
-  esMemoryLimit: "4.6G"
 agent:
   numberOfClearmlAgents: 0
   nvidiaGpusPerAgent: 1
@@ -86,10 +76,6 @@ storage:
     base_path: /data/clearml
     server: null
   capacities:
-    elasticsearch: 50Gi
-    mongo0: 50Gi
-    mongo1: 1Gi
-    redis: 5Gi
     fileserver0: 5Gi
     fileserver1: 50Gi
     apiserver0: 10Gi
@@ -104,12 +90,6 @@ services:
   fileserver:
     nodePort: 30081
     name: fileserver-service
-  mongo:
-    name: mongo-service
-  elasticsearch:
-    name: elasticsearch-service
-  redis:
-    name: redis
   agentservices:
     name: agentservices-service
 ingress:
@@ -120,3 +100,57 @@ ingress:
     tls:
         secretName: ""
 use_secrets_flexvolume: false
+redis: # configuration from https://github.com/bitnami/charts/blob/master/bitnami/redis/values.yaml
+  enabled: true
+  usePassword: false
+  databaseNumber: 0
+  master:
+    port: 6379
+    persistence:
+      enabled: true
+      accessModes:
+        - ReadWriteOnce
+      size: 5Gi
+  cluster:
+    enabled: false
+mongodb: # configuration from https://github.com/bitnami/charts/blob/master/bitnami/mongodb/values.yaml
+  enabled: true
+  architecture: standalone
+  auth:
+    enabled: false
+  replicaCount: 1
+  persistence:
+    enabled: true
+    accessModes:
+      - ReadWriteOnce
+    size: 50Gi
+  service:
+    type: ClusterIP
+    port: 27017
+    portName: mongo-service
+elasticsearch: # configuration from https://github.com/elastic/helm-charts/blob/7.10/elasticsearch/values.yaml
+  enabled: true
+  httpPort: 9200
+  roles:
+    master: "true"
+    ingest: "true"
+    data: "true"
+    remote_cluster_client: "true"
+  replicas: 1
+  minimumMasterNodes: 1
+  esJavaOpts: "-Xmx2g -Xms2g"
+  resources:
+    requests:
+      memory: "4Gi"
+    limits:
+      memory: "4Gi"
+  persistence:
+    enabled: true
+  volumeClaimTemplate:
+    accessModes: [ "ReadWriteOnce" ]
+    resources:
+      requests:
+        storage: 50Gi
+  esConfig:
+    elasticsearch.yml: |
+      xpack.security.enabled: false
