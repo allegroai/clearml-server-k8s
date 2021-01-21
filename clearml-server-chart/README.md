@@ -35,12 +35,7 @@ Use this repository to add **clearml-server** to your Helm and then deploy **cle
 ## Modify the default values required by Elastic in Docker configuration file (see [Notes for production use and defaults](https://www.elastic.co/guide/en/elasticsearch/reference/master/docker.html#_notes_for_production_use_and_defaults))
 1 - Connect to node you labeled as `app=clearml`
 
-If your system contains a `/etc/sysconfig/docker` Docker configuration file, edit it.
-Add the options in quotes to the available arguments in the `OPTIONS` section:
-
-    OPTIONS="--default-ulimit nofile=1024:65536 --default-ulimit memlock=-1:-1"
-
-Otherwise, edit `/etc/docker/daemon.json` (if it exists) or create it (if it does not exist).
+Edit `/etc/docker/daemon.json` (if it exists) or create it (if it does not exist).
 
 Add or modify the `defaults-ulimits` section as shown below. Be sure the `defaults-ulimits` section contains the `nofile` and `memlock` sub-sections and values shown.
 
