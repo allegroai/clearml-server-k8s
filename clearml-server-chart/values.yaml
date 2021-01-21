@@ -42,7 +42,7 @@ elasticsearch:
 agent:
   numberOfClearmlAgents: 0
   nvidiaGpusPerAgent: 1
-  defaultBaseDocker: "nvidia/cuda"
+  defaultBaseDocker: "nvidia/cuda:10.1-cudnn7-runtime-ubuntu18.04"
   dockerMode: true
   agentVersion: "" # if set, it *MUST* include comparison operator (e.g. ">=0.16.1")
   queues: "default" # multiple queues can be specified separated by a space (e.g. "important_jobs default")

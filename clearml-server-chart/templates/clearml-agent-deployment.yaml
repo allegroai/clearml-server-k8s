@@ -44,7 +44,7 @@ spec:
         checksum/config: {{ toYaml .Values.agent.clearmlConfig | b64enc | sha256sum }}
     spec:
       containers:
-      - image: nvidia/cuda
+      - image: nvidia/cuda:10.1-cudnn7-runtime-ubuntu18.04
         name: clearml-agent
         securityContext:
           privileged: true
