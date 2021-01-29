@@ -102,6 +102,10 @@ ingress:
 use_secrets_flexvolume: false
 redis: # configuration from https://github.com/bitnami/charts/blob/master/bitnami/redis/values.yaml
   enabled: true
+  image:
+    registry: docker.io
+    repository: bitnami/redis
+    tag: 5.0.10-debian-10-r88
   usePassword: false
   databaseNumber: 0
   master:
@@ -115,6 +119,10 @@ redis: # configuration from https://github.com/bitnami/charts/blob/master/bitnam
     enabled: false
 mongodb: # configuration from https://github.com/bitnami/charts/blob/master/bitnami/mongodb/values.yaml
   enabled: true
+  image:
+    registry: docker.io
+    repository: bitnami/mongodb
+    tag: 3.6.21-debian-9-r71
   architecture: standalone
   auth:
     enabled: false
@@ -130,6 +138,8 @@ mongodb: # configuration from https://github.com/bitnami/charts/blob/master/bitn
     portName: mongo-service
 elasticsearch: # configuration from https://github.com/elastic/helm-charts/blob/7.10/elasticsearch/values.yaml
   enabled: true
+  image: "docker.elastic.co/elasticsearch/elasticsearch"
+  imageTag: "7.6.2"
   httpPort: 9200
   roles:
     master: "true"
