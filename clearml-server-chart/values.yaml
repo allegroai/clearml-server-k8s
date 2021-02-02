@@ -136,7 +136,7 @@ mongodb: # configuration from https://github.com/bitnami/charts/blob/master/bitn
     type: ClusterIP
     port: 27017
     portName: mongo-service
-elasticsearch: # configuration from https://github.com/elastic/helm-charts/blob/7.10/elasticsearch/values.yaml
+elasticsearch: # configuration from https://github.com/elastic/helm-charts/blob/7.6.2/elasticsearch/values.yaml
   enabled: true
   image: "docker.elastic.co/elasticsearch/elasticsearch"
   imageTag: "7.6.2"
@@ -145,9 +145,9 @@ elasticsearch: # configuration from https://github.com/elastic/helm-charts/blob/
     master: "true"
     ingest: "true"
     data: "true"
-    remote_cluster_client: "true"
   replicas: 1
   minimumMasterNodes: 1
+  esJavaOpts: "-Xmx2g -Xms2g"
   extraEnvs:
     - name: bootstrap.memory_lock
       value: "true"
@@ -163,8 +163,6 @@ elasticsearch: # configuration from https://github.com/elastic/helm-charts/blob/
       value: 500mb
     - name: discovery.zen.minimum_master_nodes
       value: "1"
-    - name: discovery.type
-      value: "single-node"
     - name: http.compression_level
       value: "7"
     - name: node.ingest
@@ -177,8 +175,6 @@ elasticsearch: # configuration from https://github.com/elastic/helm-charts/blob/
       value: "false"
     - name: xpack.security.enabled
       value: "false"
-    - name: ES_JAVA_OPTS
-      value: "-Xmx2g -Xms2g"
   resources:
     requests:
       memory: "4Gi"
