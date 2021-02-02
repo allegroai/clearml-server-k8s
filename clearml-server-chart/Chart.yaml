@@ -13,6 +13,6 @@ dependencies:
     repository: "https://charts.bitnami.com/bitnami"
     condition: mongodb.enabled
   - name: elasticsearch
-    version: "~7.10.1"
+    version: "~7.6.2"
     repository: "https://helm.elastic.co"
     condition: elasticsearch.enabled
