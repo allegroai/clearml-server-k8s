@@ -74,7 +74,7 @@ spec:
         {{- end }}
         env:
         - name: TRAINS_ELASTIC_SERVICE_HOST
-          value: "elasticsearch-master"
+          value: "{{ .Values.elasticsearch.clusterName }}-master"
         - name: TRAINS_ELASTIC_SERVICE_PORT
           value: "{{ .Values.elasticsearch.httpPort }}"
         - name: TRAINS_MONGODB_SERVICE_HOST

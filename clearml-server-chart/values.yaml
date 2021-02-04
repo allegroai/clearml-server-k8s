@@ -147,12 +147,11 @@ elasticsearch: # configuration from https://github.com/elastic/helm-charts/blob/
     data: "true"
   replicas: 1
   minimumMasterNodes: 1
+  clusterName: clearml-elastic
   esJavaOpts: "-Xmx2g -Xms2g"
   extraEnvs:
     - name: bootstrap.memory_lock
       value: "true"
-    - name: cluster.name
-      value: clearml
     - name: cluster.routing.allocation.node_initial_primaries_recoveries
       value: "500"
     - name: cluster.routing.allocation.disk.watermark.low
@@ -161,14 +160,8 @@ elasticsearch: # configuration from https://github.com/elastic/helm-charts/blob/
       value: 500mb
     - name: cluster.routing.allocation.disk.watermark.flood_stage
       value: 500mb
-    - name: discovery.zen.minimum_master_nodes
-      value: "1"
     - name: http.compression_level
       value: "7"
-    - name: node.ingest
-      value: "true"
-    - name: node.name
-      value: clearml
     - name: reindex.remote.whitelist
       value: '*.*'
     - name: xpack.monitoring.enabled
