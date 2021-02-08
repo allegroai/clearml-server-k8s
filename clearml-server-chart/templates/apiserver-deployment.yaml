@@ -93,13 +93,8 @@ spec:
           value: "{{ .Values.apiserver.prepopulateArtifactsPath }}"
         - name: TRAINS_SERVER_DEPLOYMENT_TYPE
           value: {{ .Values.apiserver.deploymentType }}
-        {{- if .Values.use_secrets_flexvolume }}
         - name: TRAINS_CONFIG_DIR
           value: /opt/clearml/config:/opt/clearml/secrets
-        {{- else }}
-        - name: TRAINS_CONFIG_DIR
-          value: /opt/clearml/config
-        {{- end }}
         args:
         - apiserver
         volumeMounts:
