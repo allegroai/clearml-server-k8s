@@ -31,9 +31,13 @@ spec:
               containerPort: 8081
               protocol: TCP
           env:
+          - name: TRAINS_CONFIG_DIR
+            value: /opt/trains/config
           {{- if .Values.fileserver.extraEnvs }}
           {{ toYaml .Values.fileserver.extraEnvs | nindent 10 }}
           {{- end }}
+          args:
+            - fileserver
           livenessProbe:
             exec:
               command:

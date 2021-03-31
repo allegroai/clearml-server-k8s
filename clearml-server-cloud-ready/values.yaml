@@ -1,7 +1,5 @@
 clearml:
-  apiHost: "http://clearml-apiserver:8008"
-  fileserver: "http://clearml-fileserver:8081"
-
+  defaultCompany: "d1bd92a3b039400cbafc60a7a5b1e52b"
 ingress:
   enabled: false
   name: clearml-server-ingress
@@ -12,14 +10,17 @@ ingress:
 
 apiserver:
   prepopulateEnabled: "true"
-  prepopulateZipFiles: "/opt/clearml/db-pre-populate"
+  prepopulateZipFiles: "/opt/trains/db-pre-populate"
   prepopulateArtifactsPath: "/mnt/fileserver"
   deploymentType: "helm"
   configDir: /opt/clearml/config
 
   service:
-    type: ClusterIP
+    type: NodePort
     port: 8008
+
+  livenessDelay: 60
+  readinessDelay: 60
 
   replicaCount: 1
 
@@ -59,7 +60,7 @@ apiserver:
 
 fileserver:
   service:
-    type: ClusterIP
+    type: NodePort
     port: 8081
 
   replicaCount: 1
@@ -100,8 +101,8 @@ webserver:
   extraEnvs: []
 
   service:
-    type: ClusterIP
-    port: 8080
+    type: NodePort
+    port: 80
 
   replicaCount: 1
 
@@ -133,13 +134,10 @@ webserver:
 agentservices:
   clearmlHostIp: null
   agentVersion: ""
-  clearmlApiHost: "http://clearml-apiserver:8008"
   clearmlWebHost: null
   clearmlFilesHost: null
   clearmlGitUser: null
   clearmlGitPassword: null
-  clearmlAccessKey: null
-  clearmlSecretKey: null
   awsAccessKeyId: null
   awsSecretAccessKey: null
   awsDefaultRegion: null
@@ -182,53 +180,6 @@ agentservices:
       class: "standard"
       size: 50Gi
 
-agentGroups:
-  - name: agent-group0
-    replicaCount: 0
-    nvidiaGpusPerAgent: 1
-    agentVersion: "" # if set, it *MUST* include comparison operator (e.g. ">=0.16.1")
-    queues: "default" # multiple queues can be specified separated by a space (e.g. "important_jobs default")
-    clearmlApiHost: "http://clearml-apiserver:8008"
-    clearmlWebHost: "http://clearml-webserver"
-    clearmlFilesHost: "http://clearml-fileserver:8081"
-    clearmlGitUser: null
-    clearmlGitPassword: null
-    clearmlAccessKey: null
-    clearmlSecretKey: null
-    awsAccessKeyId: null
-    awsSecretAccessKey: null
-    awsDefaultRegion: null
-    azureStorageAccount: null
-    azureStorageKey: null
-    clearmlConfig: |-
-      sdk {
-      }
-
-    image:
-      repository: "nvidia/cuda"
-      pullPolicy: IfNotPresent
-      tag: "11.0-base-ubuntu18.04"
-
-    podAnnotations: {}
-
-    resources: {}
-      # We usually recommend not to specify default resources and to leave this as a conscious
-      # choice for the user. This also increases chances charts run on environments with little
-      # resources, such as Minikube. If you do want to specify resources, uncomment the following
-      # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-      # limits:
-      #   cpu: 100m
-      #   memory: 128Mi
-      # requests:
-      #   cpu: 100m
-      #   memory: 128Mi
-
-    nodeSelector: {}
-
-    tolerations: []
-
-    affinity: {}
-
 redis: # configuration from https://github.com/bitnami/charts/blob/master/bitnami/redis/values.yaml
   enabled: true
   image:
@@ -267,8 +218,10 @@ mongodb: # configuration from https://github.com/bitnami/charts/blob/master/bitn
     port: 27017
     portName: mongo-service
 
-elasticsearch: # configuration from https://github.com/elastic/helm-charts/blob/7.10/elasticsearch/values.yaml
+elasticsearch: # configuration from https://github.com/elastic/helm-charts/blob/7.6.2/elasticsearch/values.yaml
   enabled: true
+  image: "docker.elastic.co/elasticsearch/elasticsearch"
+  imageTag: "7.6.2"
   httpPort: 9200
   roles:
     master: "true"
@@ -277,7 +230,25 @@ elasticsearch: # configuration from https://github.com/elastic/helm-charts/blob/
     remote_cluster_client: "true"
   replicas: 1
   minimumMasterNodes: 1
+  clusterName: clearml-elastic
   esJavaOpts: "-Xmx2g -Xms2g"
+  extraEnvs:
+    - name: bootstrap.memory_lock
+      value: "true"
+    - name: cluster.routing.allocation.node_initial_primaries_recoveries
+      value: "500"
+    - name: cluster.routing.allocation.disk.watermark.low
+      value: 500mb
+    - name: cluster.routing.allocation.disk.watermark.high
+      value: 500mb
+    - name: cluster.routing.allocation.disk.watermark.flood_stage
+      value: 500mb
+    - name: http.compression_level
+      value: "7"
+    - name: reindex.remote.whitelist
+      value: '*.*'
+    - name: xpack.monitoring.enabled
+      value: "false"
   resources:
     requests:
       memory: "4Gi"
