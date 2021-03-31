@@ -78,6 +78,13 @@ app.kubernetes.io/name: {{ include "clearml.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}-agentservices
 {{- end }}
 
+Selector labels (agent)
+*/}}
+{{- define "clearml.selectorLabelsAgent" -}}
+app.kubernetes.io/name: {{ include "clearml.name" . }}
+app.kubernetes.io/instance: {{ .Release.Name }}-agent
+{{- end }}
+
 {{/*
 Create the name of the service account to use
 */}}

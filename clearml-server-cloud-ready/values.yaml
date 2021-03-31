@@ -180,6 +180,50 @@ agentservices:
       class: "standard"
       size: 50Gi
 
+agentGroups:
+  - name: agent-group0
+    replicaCount: 0
+    nvidiaGpusPerAgent: 1
+    agentVersion: "" # if set, it *MUST* include comparison operator (e.g. ">=0.16.1")
+    queues: "default" # multiple queues can be specified separated by a space (e.g. "important_jobs default")
+    clearmlGitUser: null
+    clearmlGitPassword: null
+    clearmlAccessKey: null
+    clearmlSecretKey: null
+    awsAccessKeyId: null
+    awsSecretAccessKey: null
+    awsDefaultRegion: null
+    azureStorageAccount: null
+    azureStorageKey: null
+    clearmlConfig: |-
+      sdk {
+      }
+
+    image:
+      repository: "nvidia/cuda"
+      pullPolicy: IfNotPresent
+      tag: "11.0-base-ubuntu18.04"
+
+    podAnnotations: {}
+
+    resources: {}
+      # We usually recommend not to specify default resources and to leave this as a conscious
+      # choice for the user. This also increases chances charts run on environments with little
+      # resources, such as Minikube. If you do want to specify resources, uncomment the following
+      # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+      # limits:
+      #   cpu: 100m
+      #   memory: 128Mi
+      # requests:
+      #   cpu: 100m
+      #   memory: 128Mi
+
+    nodeSelector: {}
+
+    tolerations: []
+
+    affinity: {}
+
 redis: # configuration from https://github.com/bitnami/charts/blob/master/bitnami/redis/values.yaml
   enabled: true
   image:
