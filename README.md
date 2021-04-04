@@ -23,6 +23,14 @@ In order to host your own server, you will need to install **clearml-server** an
 
 Use this repository to deploy **clearml-server** on Kubernetes clusters.
 
+## Contents:
+
+* [K8S templates](https://github.com/allegroai/clearml-server-k8s/tree/master/clearml-server-k8s)
+* [Basic helm chart](https://github.com/allegroai/clearml-server-k8s/tree/master/clearml-server-chart)
+* [Cloud ready helm chart](https://github.com/allegroai/clearml-server-k8s/tree/master/clearml-server-cloud-ready)
+
+## Deploying ClearML Server in Kubernetes Clusters Using Helm 
+
 ## Prerequisites
 
 * a Kubernetes cluster
