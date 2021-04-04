@@ -1,5 +1,5 @@
 # ClearML Server for Kubernetes Clusters Using Helm
-
+# Cloud Ready Version (Advanced)
 ##  Auto-Magical Experiment Manager & Version Control for AI
 
 [![GitHub license](https://img.shields.io/badge/license-SSPL-green.svg)](https://img.shields.io/badge/license-SSPL-green.svg)
@@ -22,100 +22,66 @@ In order to host your own server, you will need to install **clearml-server** an
 * Locally-hosted file server for storing images and models making them easily accessible using the Web-App
 
 Use this repository to add **clearml-server** to your Helm and then deploy **clearml-server** on Kubernetes clusters using Helm.
- 
+
+## Deploying Your Own Elasticsearch, Redis and Mongodb
+
+ClearML Server requires that you have elasticsearch, redis and mongodb services.
+This chart default templates contains [bitnami](https://bitnami.com/) charts for [redis](https://github.com/bitnami/charts/tree/master/bitnami/redis) and [mongodb](https://github.com/bitnami/charts/tree/master/bitnami/mongodb), and the official chart for elasticsearch (which is currently still beta).
+You can either use the default ones, or use your own deployments and set their name and ports in the appropriate sections of this chart.
+In order to use your own deployment, make sure to disable the existing one in the `values.yaml` (for example, in order to disable elastic set `elasticsearch.enabled = false`) 
+
 ## Prerequisites
 
-* a Kubernetes cluster
-* `kubectl` is installed and configured (see [Install and Set Up kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) in the Kubernetes documentation)
-* `helm` installed (see [Installing Helm](https://helm.sh/docs/using_helm/#installing-helm) in the Helm documentation)
-* one node labeled `app: clearml`
+1. a Kubernetes cluster
+1. Persistent Volumes for `pvc-apiserver.yaml`, `pvc-fileserver.yaml`, and `pvc-agentservices.yaml`.
+1. Persistent volumes for elasticsearch, mongodb and redis (redis is optional). 
+   See relevant information for each chart:
+   * [elasticsearch](https://github.com/elastic/helm-charts/blob/7.6.2/elasticsearch/values.yaml)
+   * [mongodb](https://github.com/bitnami/charts/tree/master/bitnami/mongodb#parameters)
+   * [redis](https://github.com/bitnami/charts/tree/master/bitnami/redis#parameters)
+   Make sure to define the following values for each PV: 
+   * elasticsearch - in the `values.yaml` set `elasticsearch.persistence.enabled=true` and set `elasticsearch.volumeClaimTemplate.storageClassName` to the storageClassName used in your elasticsearch PV.
+   * mongodb - in order to define a persistent volume for mongodb, in the `values.yaml` set `mongodb.persistence.enabled=true` and set `mongodb.persistence.storageClass` to the storageClassName used in your mongodb PV.
+     Read [here](https://github.com/bitnami/charts/tree/master/bitnami/mongodb#parameters) for more details.
+   * redis - in order to define a persistent volume for redis, in the `values.yaml` set `redis.master.persistence.enabled=true` and set `redis.master.persistence.storageClass` to the storageClassName used in your redis PV.
+     Read [here](https://github.com/bitnami/charts/tree/master/bitnami/redis#parameters) for more details.
+1. `kubectl` is installed and configured (see [Install and Set Up kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) in the Kubernetes documentation)
+1. `helm` installed (see [Installing Helm](https://helm.sh/docs/using_helm/#installing-helm) in the Helm documentation)
 
-    **Important**: ClearML Server deployment uses node storage. If more than one node is labeled as `app: clearml` and you redeploy or update later, then ClearML Server may not locate all of your data. 
-    
-## Modify the default values required by Elastic in Docker configuration file (see [Notes for production use and defaults](https://www.elastic.co/guide/en/elasticsearch/reference/master/docker.html#_notes_for_production_use_and_defaults))
-1 - Connect to node you labeled as `app=clearml`
-
-Edit `/etc/docker/daemon.json` (if it exists) or create it (if it does not exist).
-
-Add or modify the `defaults-ulimits` section as shown below. Be sure the `defaults-ulimits` section contains the `nofile` and `memlock` sub-sections and values shown.
-
-**Note**: Your configuration file may contain other sections. If so, confirm that the sections are separated by commas (valid JSON format). For more information about Docker configuration files, see [Daemon configuration file](https://docs.docker.com/engine/reference/commandline/dockerd/#daemon-configuration-file), in the Docker documentation.
-
-The clearml-server required defaults values are (json):
-
-    {
-        "default-ulimits": {
-            "nofile": {
-                "name": "nofile",
-                "hard": 65536,
-                "soft": 1024
-            },
-            "memlock":
-            {
-                "name": "memlock",
-                "soft": -1,
-                "hard": -1
-            }
-        }
-    }
-
-2 - Set the Maximum Number of Memory Map Areas
-
-Elastic requires that the vm.max_map_count kernel setting, which is the maximum number of memory map areas a process can use, is set to at least 262144.
-
-For CentOS 7, Ubuntu 16.04, Mint 18.3, Ubuntu 18.04 and Mint 19.x, we tested the following commands to set vm.max_map_count:
-
-    echo "vm.max_map_count=262144" > /tmp/99-clearml.conf
-    sudo mv /tmp/99-clearml.conf /etc/sysctl.d/99-clearml.conf
-    sudo sysctl -w vm.max_map_count=262144
-
-For information about setting this parameter on other systems, see the [elastic documentation](https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html#docker-cli-run-prod-mode).
-
-3 - Restart docker:
-
-    sudo service docker restart
-    
 ## Deploying ClearML Server in Kubernetes Clusters Using Helm 
  
 1. Add the **clearml-server** repository to your Helm:
 
-        helm repo add allegroai https://allegroai.github.io/clearml-server-helm/
+        helm repo add allegroai https://allegroai.github.io/clearml-server-helm-cloud-ready/
 
 1. Confirm the **clearml-server** repository is now in Helm:
 
         helm search clearml
 
-    The helm search results must include `allegroai/clearml-server-chart`.
+    The helm search results must include `allegroai/clearml-server-cloud-ready`.
 
-1. Install `clearml-server-chart` on your cluster:
+1. Install `clearml-server-cloud-ready` on your cluster:
 
-        helm install allegroai/clearml-server-chart --namespace=clearml --name clearml-server
+        helm install allegroai/clearml-server-cloud-ready --namespace=clearml --name clearml-server
 
     A  clearml `namespace` is created in your cluster and **clearml-server** is deployed in it.
    
         
 ## Updating ClearML Server application using Helm
 
-1. If you are upgrading from Trains Server version 0.15 or older to ClearML Server, a data migration is required before you upgrade.
-Stay tuned, we'll update the required steps for the upgrade soon!
+1. If you are upgrading from the [single node version](https://github.com/allegroai/clearml-server-helm) of ClearML Server helm charts, follow these steps first:
 
-1. If you are upgrading from Trains Server to ClearML Server, follow these steps first:
-
-    1. Log in to the node labeled as `app=trains`
-    1. Rename /opt/trains and its subdirectories to /opt/clearml the following way:
-    
-           sudo mv /opt/trains /opt/clearml
-
-    1. Label the node as `app=clearml`
+    1. Log in to the node previously labeled as `app=trains`
+    1. Copy each folder under /opt/clearml/data to it's persistent volume. 
     1. Follow the [Deploying ClearML Server](##-Deploying-ClearML-Server-in-Kubernetes-Clusters-Using-Helm) instructions to deploy Clearml
 
-1. Update using new or updated values.yaml
+1. Update using new or updated `values.yaml`
         
-        helm upgrade clearml-server allegroai/clearml-server-chart -f new-values.yaml
+        helm upgrade clearml-server allegroai/clearml-server-cloud-ready -f new-values.yaml
         
 1. If there are no breaking changes, you can update your deployment to match repository version:
 
-        helm upgrade clearml-server allegroai/clearml-server-chart
+        helm upgrade clearml-server allegroai/clearml-server-cloud-ready
    
    **Important**: 
         
