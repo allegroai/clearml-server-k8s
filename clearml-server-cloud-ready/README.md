@@ -56,13 +56,13 @@ In order to use your own deployment, make sure to disable the existing one in th
 
 1. Confirm the **clearml-server** repository is now in Helm:
 
-        helm search clearml
+        helm search repo clearml
 
     The helm search results must include `allegroai/clearml-server-cloud-ready`.
 
 1. Install `clearml-server-cloud-ready` on your cluster:
 
-        helm install allegroai/clearml-server-cloud-ready --namespace=clearml --name clearml-server
+        helm install clearml-server allegroai/clearml-server-cloud-ready --namespace=clearml --create-namespace
 
     A  clearml `namespace` is created in your cluster and **clearml-server** is deployed in it.
    
