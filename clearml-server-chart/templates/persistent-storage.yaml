@@ -10,6 +10,7 @@ spec:
     storage: {{ .Values.storage.capacities.elasticsearch }}
   accessModes:
     - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
   {{- if .Values.storage.use_nfs }}
   nfs:
     server: {{ .Values.storage.nfs.server }}
@@ -43,6 +44,7 @@ spec:
     storage: {{ .Values.storage.capacities.mongo0 }}
   accessModes:
     - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
   {{- if .Values.storage.use_nfs }}
   nfs:
     server: {{ .Values.storage.nfs.server }}
@@ -76,6 +78,7 @@ spec:
     storage: {{ .Values.storage.capacities.mongo1 }}
   accessModes:
     - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
   {{- if .Values.storage.use_nfs }}
   nfs:
     server: {{ .Values.storage.nfs.server }}
@@ -109,6 +112,7 @@ spec:
     storage: {{ .Values.storage.capacities.redis }}
   accessModes:
     - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
   {{- if .Values.storage.use_nfs }}
   nfs:
     server: {{ .Values.storage.nfs.server }}
@@ -142,6 +146,7 @@ spec:
     storage: {{ .Values.storage.capacities.fileserver0 }}
   accessModes:
     - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
   {{- if .Values.storage.use_nfs }}
   nfs:
     server: {{ .Values.storage.nfs.server }}
@@ -175,6 +180,7 @@ spec:
     storage: {{ .Values.storage.capacities.fileserver1 }}
   accessModes:
     - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
   {{- if .Values.storage.use_nfs }}
   nfs:
     server: {{ .Values.storage.nfs.server }}
@@ -208,6 +214,7 @@ spec:
     storage: {{ .Values.storage.capacities.apiserver0 }}
   accessModes:
     - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
   {{- if .Values.storage.use_nfs }}
   nfs:
     server: {{ .Values.storage.nfs.server }}
@@ -241,6 +248,7 @@ spec:
     storage: {{ .Values.storage.capacities.apiserver1 }}
   accessModes:
     - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
   {{- if .Values.storage.use_nfs }}
   nfs:
     server: {{ .Values.storage.nfs.server }}
