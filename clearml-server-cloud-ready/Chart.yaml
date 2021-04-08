@@ -2,7 +2,7 @@ apiVersion: v2
 appVersion: "0.17"
 description: Clearml server Helm chart for Kubernetes
 name: clearml-server-cloud-ready
-version: 0.17.0+1
+version: "1.0.0"
 dependencies:
   - name: redis
     version: "~10.9.0"

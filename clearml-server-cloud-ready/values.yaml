@@ -12,7 +12,6 @@ apiserver:
   prepopulateEnabled: "true"
   prepopulateZipFiles: "/opt/trains/db-pre-populate"
   prepopulateArtifactsPath: "/mnt/fileserver"
-  deploymentType: "helm"
   configDir: /opt/clearml/config
 
   service:
