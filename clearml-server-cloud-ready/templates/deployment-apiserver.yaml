@@ -34,15 +34,15 @@ spec:
               protocol: TCP
           env:
           - name: TRAINS_ELASTIC_SERVICE_HOST
-            value: "{{ .Release.Name }}-elasticsearch-master"
+            value: "{{ tpl .Values.elasticsearch.name . }}"
           - name: TRAINS_ELASTIC_SERVICE_PORT
             value: "{{ .Values.elasticsearch.httpPort }}"
           - name: TRAINS_MONGODB_SERVICE_HOST
-            value: "{{ .Release.Name }}-mongodb"
+            value: "{{ tpl .Values.mongodb.service.name . }}"
           - name: TRAINS_MONGODB_SERVICE_PORT
             value: "{{ .Values.mongodb.service.port }}"
           - name: TRAINS_REDIS_SERVICE_HOST
-            value: "{{ .Release.Name }}-redis-master"
+            value: "{{ tpl .Values.redis.master.name . }}"
           - name: TRAINS_REDIS_SERVICE_PORT
             value: "{{ .Values.redis.master.port }}"
           - name: TRAINS__apiserver__pre_populate__enabled

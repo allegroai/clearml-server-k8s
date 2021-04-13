@@ -220,6 +220,7 @@ redis: # configuration from https://github.com/bitnami/charts/blob/master/bitnam
   usePassword: false
   databaseNumber: 0
   master:
+    name: "{{ .Release.Name }}-redis-master"
     port: 6379
     persistence:
       enabled: true
@@ -245,12 +246,14 @@ mongodb: # configuration from https://github.com/bitnami/charts/blob/master/bitn
       - ReadWriteOnce
     size: 50Gi
   service:
+    name: "{{ .Release.Name }}-mongodb"
     type: ClusterIP
     port: 27017
     portName: mongo-service
 
 elasticsearch: # configuration from https://github.com/elastic/helm-charts/blob/7.6.2/elasticsearch/values.yaml
   enabled: true
+  name: "{{ .Release.Name }}-elasticsearch-master"
   image: "docker.elastic.co/elasticsearch/elasticsearch"
   imageTag: "7.6.2"
   httpPort: 9200
