@@ -19,10 +19,10 @@ spec:
         {{- include "clearml.selectorLabelsApiServer" . | nindent 8 }}
     spec:
       {{- if .Values.apiserver.storage.enableConfigVolume }}
-       volumes:
-         - name: apiserver-config
-           persistentVolumeClaim:
-             claimName: {{ include "clearml.fullname" . }}-apiserver-config
+      volumes:
+        - name: apiserver-config
+          persistentVolumeClaim:
+            claimName: {{ include "clearml.fullname" . }}-apiserver-config
       {{- end }}
       containers:
         - name: {{ .Chart.Name }}
