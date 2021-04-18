@@ -93,9 +93,9 @@ spec:
         args:
         - apiserver
         volumeMounts:
-        - mountPath: /var/log/clearml
+        - mountPath: /var/log/trains
           name: apiserver-hostpath0
-        - mountPath: /opt/clearml/config
+        - mountPath: /opt/trains/config
           name: apiserver-hostpath1
       restartPolicy: Always
       nodeSelector:
