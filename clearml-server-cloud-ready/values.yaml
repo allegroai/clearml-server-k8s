@@ -253,7 +253,7 @@ mongodb: # configuration from https://github.com/bitnami/charts/blob/master/bitn
 
 elasticsearch: # configuration from https://github.com/elastic/helm-charts/blob/7.6.2/elasticsearch/values.yaml
   enabled: true
-  name: "{{ .Release.Name }}-elasticsearch-master"
+  name: "{{ .Release.Name }}-elastic-master"
   image: "docker.elastic.co/elasticsearch/elasticsearch"
   imageTag: "7.6.2"
   httpPort: 9200
@@ -261,7 +261,6 @@ elasticsearch: # configuration from https://github.com/elastic/helm-charts/blob/
     master: "true"
     ingest: "true"
     data: "true"
-    remote_cluster_client: "true"
   replicas: 1
   minimumMasterNodes: 1
   clusterName: clearml-elastic
@@ -282,6 +281,8 @@ elasticsearch: # configuration from https://github.com/elastic/helm-charts/blob/
     - name: reindex.remote.whitelist
       value: '*.*'
     - name: xpack.monitoring.enabled
+      value: "false"
+    - name: xpack.security.enabled
       value: "false"
   resources:
     requests:
