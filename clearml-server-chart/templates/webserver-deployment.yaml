@@ -79,6 +79,8 @@ spec:
         env:
           - name: NGINX_APISERVER_ADDRESS
             value: "http://apiserver-service:8008/"
+          - name: NGINX_FILESERVER_ADDRESS
+            value: "http://fileserver-service:8081/"
       restartPolicy: Always
       nodeSelector:
         {{ .Values.clearml.nodeSelector}}

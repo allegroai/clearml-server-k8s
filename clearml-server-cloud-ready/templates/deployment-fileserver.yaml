@@ -31,8 +31,8 @@ spec:
               containerPort: 8081
               protocol: TCP
           env:
-          - name: TRAINS_CONFIG_DIR
-            value: /opt/trains/config
+          - name: CLEARML_CONFIG_DIR
+            value: /opt/clearml/config
           {{- if .Values.fileserver.extraEnvs }}
           {{ toYaml .Values.fileserver.extraEnvs | nindent 10 }}
           {{- end }}

@@ -73,31 +73,31 @@ spec:
             {{- toYaml . | nindent 12 }}
         {{- end }}
         env:
-        - name: TRAINS_ELASTIC_SERVICE_HOST
+        - name: CLEARML_ELASTIC_SERVICE_HOST
           value: {{ .Values.apiserver.elasticServiceName }}
-        - name: TRAINS_ELASTIC_SERVICE_PORT
+        - name: CLEARML_ELASTIC_SERVICE_PORT
           value: "{{ .Values.apiserver.elasticServicePort }}"
-        - name: TRAINS_MONGODB_SERVICE_HOST
+        - name: CLEARML_MONGODB_SERVICE_HOST
           value: {{ .Values.apiserver.mongoServiceName }}
-        - name: TRAINS_MONGODB_SERVICE_PORT
+        - name: CLEARML_MONGODB_SERVICE_PORT
           value: "{{ .Values.apiserver.mongoServicePort }}"
-        - name: TRAINS_REDIS_SERVICE_HOST
+        - name: CLEARML_REDIS_SERVICE_HOST
           value: {{ .Values.apiserver.redisServiceName }}
-        - name: TRAINS_REDIS_SERVICE_PORT
+        - name: CLEARML_REDIS_SERVICE_PORT
           value: "{{ .Values.apiserver.redisServicePort }}"
-        - name: TRAINS__apiserver__pre_populate__enabled
+        - name: CLEARML__apiserver__pre_populate__enabled
           value: "{{ .Values.apiserver.prepopulateEnabled }}"
-        - name: TRAINS__apiserver__pre_populate__zip_files
+        - name: CLEARML__apiserver__pre_populate__zip_files
           value: "{{ .Values.apiserver.prepopulateZipFiles }}"
-        - name: TRAINS__apiserver__pre_populate__artifacts_path
+        - name: CLEARML__apiserver__pre_populate__artifacts_path
           value: "{{ .Values.apiserver.prepopulateArtifactsPath }}"
-        - name: TRAINS_SERVER_DEPLOYMENT_TYPE
+        - name: CLEARML_SERVER_DEPLOYMENT_TYPE
           value: {{ .Values.apiserver.deploymentType }}
         {{- if .Values.use_secrets_flexvolume }}
-        - name: TRAINS_CONFIG_DIR
+        - name: CLEARML_CONFIG_DIR
           value: /opt/clearml/config:/opt/clearml/secrets
         {{- else }}
-        - name: TRAINS_CONFIG_DIR
+        - name: CLEARML_CONFIG_DIR
           value: /opt/clearml/config
         {{- end }}
         args:

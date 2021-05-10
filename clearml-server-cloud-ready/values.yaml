@@ -10,7 +10,7 @@ ingress:
 
 apiserver:
   prepopulateEnabled: "true"
-  prepopulateZipFiles: "/opt/trains/db-pre-populate"
+  prepopulateZipFiles: "/opt/clearml/db-pre-populate"
   prepopulateArtifactsPath: "/mnt/fileserver"
   configDir: /opt/clearml/config
 
@@ -26,7 +26,7 @@ apiserver:
   image:
     repository: "allegroai/clearml"
     pullPolicy: IfNotPresent
-    tag: "0.17"
+    tag: "1.0.0"
 
   extraEnvs: []
 
@@ -67,7 +67,7 @@ fileserver:
   image:
     repository: "allegroai/clearml"
     pullPolicy: IfNotPresent
-    tag: "0.17"
+    tag: "1.0.0"
 
   extraEnvs: []
 
@@ -108,7 +108,7 @@ webserver:
   image:
     repository: "allegroai/clearml"
     pullPolicy: IfNotPresent
-    tag: "0.17"
+    tag: "1.0.0"
 
   podAnnotations: {}
 
@@ -262,6 +262,9 @@ elasticsearch: # configuration from https://github.com/elastic/helm-charts/blob/
     ingest: "true"
     data: "true"
   replicas: 1
+  # Readiness probe hack for a single-node cluster (where status will never be green). Should be removed if using replicas > 1
+  clusterHealthCheckParams: "wait_for_status=yellow&timeout=1s"
+
   minimumMasterNodes: 1
   clusterName: clearml-elastic
   esJavaOpts: "-Xmx2g -Xms2g"

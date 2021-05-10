@@ -6,6 +6,8 @@
 [![GitHub version](https://img.shields.io/github/release-pre/allegroai/clearml-server.svg)](https://img.shields.io/github/release-pre/allegroai/clearml-server.svg)
 [![PyPI status](https://img.shields.io/badge/status-beta-yellow.svg)](https://img.shields.io/badge/status-beta-yellow.svg)
 
+***NOTE**: This is the simple Helm chart for ClearML Server. For the advanced cloud-ready version see [here](../clearml-server-cloud-ready).* 
+
 ## Introduction
 
 The **clearml-server** is the backend service infrastructure for [ClearML](https://github.com/allegroai/clearml).
