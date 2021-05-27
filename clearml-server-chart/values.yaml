@@ -3,7 +3,7 @@ clearml:
   namespace: clearml
   image:
     repository: allegroai/clearml
-    tag: 1.0.1
+    tag: 1.0.2
 apiserver:
   elasticServiceName: elasticsearch-service
   elasticServicePort: "9200"
