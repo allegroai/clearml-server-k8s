@@ -180,7 +180,8 @@ agentservices:
       size: 50Gi
 
 agentGroups:
-  - name: agent-group0
+  agent-group0:
+    name: agent-group0
     replicaCount: 0
     nvidiaGpusPerAgent: 1
     agentVersion: "" # if set, it *MUST* include comparison operator (e.g. ">=0.16.1")
