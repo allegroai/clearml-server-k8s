@@ -3,7 +3,7 @@ clearml:
   namespace: clearml
   image:
     repository: allegroai/clearml
-    tag: 0.17.0-63
+    tag: 1.0.2
 apiserver:
   elasticServiceName: elasticsearch-service
   elasticServicePort: "9200"
@@ -12,7 +12,7 @@ apiserver:
   redisServiceName: redis
   redisServicePort: "6379"
   prepopulateEnabled: "true"
-  prepopulateZipFiles: "/opt/trains/db-pre-populate"
+  prepopulateZipFiles: "/opt/clearml/db-pre-populate"
   prepopulateArtifactsPath: "/mnt/fileserver"
   deploymentType: "Helm"
   configDir: /opt/clearml/config
@@ -44,7 +44,7 @@ agent:
   nvidiaGpusPerAgent: 1
   defaultBaseDocker: "nvidia/cuda:10.1-cudnn7-runtime-ubuntu18.04"
   dockerMode: true
-  agentVersion: "" # if set, it *MUST* include comparison operator (e.g. ">=0.16.1")
+  agentVersion: "" # if set, it *MUST* include comparison operator (e.g. ">=0.17.2")
   queues: "default" # multiple queues can be specified separated by a space (e.g. "important_jobs default")
   clearmlApiHost: "http://apiserver-service:8008"
   clearmlWebHost: "http://webserver-service"
