@@ -93,13 +93,8 @@ spec:
           value: "{{ .Values.apiserver.prepopulateArtifactsPath }}"
         - name: CLEARML_SERVER_DEPLOYMENT_TYPE
           value: {{ .Values.apiserver.deploymentType }}
-        {{- if .Values.use_secrets_flexvolume }}
         - name: CLEARML_CONFIG_DIR
           value: /opt/clearml/config:/opt/clearml/secrets
-        {{- else }}
-        - name: CLEARML_CONFIG_DIR
-          value: /opt/clearml/config
-        {{- end }}
         args:
         - apiserver
         volumeMounts:
