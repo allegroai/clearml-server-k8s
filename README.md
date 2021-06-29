@@ -45,7 +45,7 @@ Apache License, Version 2.0 (see the [LICENSE](https://www.apache.org/licenses/L
 
 ## Documentation, Community & Support
 
-More information in the [official documentation](https://clear.ml/docs/latest/docs/) and [on YouTube](https://www.youtube.com/c/ClearML).
+More information in the [official documentation](https://clear.ml/docs/latest/docs) and [on YouTube](https://www.youtube.com/c/ClearML).
 
 For examples and use cases, check the [examples folder](https://github.com/allegroai/clearml/tree/master/examples) and [corresponding documentation](https://clear.ml/docs/latest/docs/guides).
 
