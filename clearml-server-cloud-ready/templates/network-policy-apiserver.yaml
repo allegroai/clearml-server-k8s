@@ -1,0 +1,38 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "clearml.fullname" . }}-apiserver
+  labels:
+    {{- include "clearml.labels" . | nindent 4 }}
+spec:
+  egress:
+  - ports:
+    - port: 6379
+      protocol: TCP
+    to:
+    - podSelector:
+        matchLabels:
+          app: redis
+  - ports:
+    - port: 9200
+      protocol: TCP
+    to:
+    - podSelector:
+        matchLabels:
+        {{- if .Values.elasticsearch.enabled }}
+          app: {{ .Release.Name }}-elastic-master
+        {{- else }}
+          {{ .Values.apiserver.networkPolicy.labels.elasticsearch.key }}: {{ .Values.apiserver.networkPolicy.labels.elasticsearch.value }}
+        {{- end }}
+  - ports:
+    - port: 27017
+      protocol: TCP
+    to:
+    - podSelector:
+        matchLabels:
+          app.kubernetes.io/component: mongodb
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/instance: {{ .Release.Name }}-apiserver
+  policyTypes:
+  - Egress

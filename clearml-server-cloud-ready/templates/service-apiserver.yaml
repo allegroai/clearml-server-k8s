@@ -9,7 +9,7 @@ spec:
   ports:
     - port: {{ .Values.apiserver.service.port }}
       targetPort: {{ .Values.apiserver.service.port }}
-      nodePort: 30008
+      nodePort: {{ .Values.apiserver.service.nodePort }}
       protocol: TCP
   selector:
     {{- include "clearml.selectorLabelsApiServer" . | nindent 4 }}
