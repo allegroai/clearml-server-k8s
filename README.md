@@ -1,3 +1,8 @@
+# This repository is being deprecated
+# :tada: Please see the new and improved [ClearML Helm Charts repository](https://github.com/allegroai/clearml-helm-charts) :tada:
+
+---
+
 # ClearML Server for Kubernetes Clusters 
 
 ##  Auto-Magical Experiment Manager & Version Control for AI
